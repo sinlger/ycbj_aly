@@ -1,0 +1,61 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+---
+
+<BaseLayout>
+  <div class="max-w-7xl mx-auto px-8 md:px-12 lg:px-32 py-12">
+    <div class="flex flex-col items-center justify-center gap-6">
+      <h1 class="text-3xl font-bold text-slate-900">Hono API Test</h1>
+      
+      <div class="p-6 bg-white rounded-xl shadow-sm border border-slate-200 w-full max-w-md">
+        <p class="mb-4 text-slate-600">Click the button below to fetch data from Hono backend.</p>
+        
+        <button
+          id="fetchBtn"
+          class="w-full py-3 px-4 inline-flex justify-center items-center gap-2 rounded-md border border-transparent font-semibold bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all text-sm"
+        >
+          Call /api/hello
+        </button>
+
+        <div id="result" class="mt-6 hidden">
+          <h3 class="text-sm font-semibold text-slate-900 mb-2">Response:</h3>
+          <pre class="bg-slate-100 p-4 rounded-md text-xs font-mono text-slate-700 overflow-x-auto"></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+</BaseLayout>
+
+<script>
+  const btn = document.getElementById('fetchBtn');
+  const resultDiv = document.getElementById('result');
+  const pre = resultDiv?.querySelector('pre');
+
+  btn?.addEventListener('click', async () => {
+    try {
+      if (btn instanceof HTMLButtonElement) {
+        btn.disabled = true;
+        btn.textContent = 'Loading...';
+      }
+
+      const response = await fetch('/api/hello');
+      const data = await response.json();
+
+      if (resultDiv && pre) {
+        resultDiv.classList.remove('hidden');
+        pre.textContent = JSON.stringify(data, null, 2);
+      }
+    } catch (error) {
+      if (resultDiv && pre) {
+        resultDiv.classList.remove('hidden');
+        pre.textContent = 'Error: ' + error;
+        pre.classList.add('text-red-500');
+      }
+    } finally {
+      if (btn instanceof HTMLButtonElement) {
+        btn.disabled = false;
+        btn.textContent = 'Call /api/hello';
+      }
+    }
+  });
+</script>
