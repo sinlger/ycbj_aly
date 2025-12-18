@@ -6,27 +6,41 @@ dist/
 # dependencies
 node_modules/
 
-.unlighthouse
-
 # logs
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
-yarn.lock
-package-lock.json
-
 
 # environment variables
 .env
-.env.production
+.env.*
 
 # macOS-specific files
 .DS_Store
 
-# ignore .astro directory
-.astro
+# Windows-specific files
+Thumbs.db
+Desktop.ini
 
-# Local Netlify folder
-.netlify
-.vercel
+# Astro
+.astro/
+
+# Cloudflare
+.wrangler/
+
+# Editors
+.vscode/
+.idea/
+*.suo
+*.ntvs
+*.njsproj
+*.sln
+*.sw?
+
+# Netlify / Vercel
+.netlify/
+.vercel/
+
+# Tooling
+.unlighthouse
