@@ -6,16 +6,18 @@ export default defineConfig({
   output: "server",
   adapter: cloudflare(),
   site: "https://yoursite.com",
+  /*
   experimental: {
     fonts: [
       {
         provider: fontProviders.google(),
         name: "Inter",
-        cssVariable: "--font-sans",
+        cssVariable: "--font-inter",
         weights: [400, 500],
       }
     ],
   },
+  */
   integrations: [sitemap()],
   vite: {
     plugins: [tailwindcss()],
