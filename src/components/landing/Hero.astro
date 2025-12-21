@@ -1,5 +1,6 @@
 ---
 import OptimizedImage from "../../layouts/utilities/OptimizedImage.astro";
+import UploadComponent from "../React/UploadComponent";
 
 const featuresList = [
   {
@@ -19,54 +20,180 @@ const featuresList = [
 ];
 ---
 
-<section class="overflow-hidden">
-  <div class="px-8 pt-32 mx-auto md:px-12 lg:px-24 max-w-7xl relative">
-    <div class="max-w-2xl text-center mx-auto lg:text-balance mb-10">
-      <p class="text-sm leading-normal font-bold uppercase text-accent-600">
-        Tagline
-      </p>
-      <h2
-        class="text-xl/snug leading-tight tracking-tight sm:text-2xl/snug md:text-3xl/snug capitalize lg:text-4xl/snug mt-4 font-medium text-base-900">
-        An astro template built with Astro and Tailwind CSS for your next
-        project
-      </h2>
-      <p class="text-base leading-normal mt-4 text-base-500 font-medium">
-        The fastest method for working together on staging and temporary
-        environments.
-      </p>
-      <div
-        class="flex flex-wrap items-center gap-2 justify-center mx-auto mt-12">
-        <a
-          href="https://github.com/bekturaslan/syntro-astro"
-          class="flex items-center justify-center transition-all duration-200 focus:ring-2 focus:outline-none text-base-500 bg-white hover:bg-accent-100 ring-1 ring-base-200 focus:ring-accent-100 hover:text-accent-600 h-9 px-4 py-2 text-sm font-medium rounded-md">
-          Get This Template
-        </a>
-        <a
-          href="https://getastrothemes.com/free-astro-themes-templates/"
-          class="flex items-center justify-center transition-all duration-200 focus:ring-2 focus:outline-none text-white bg-accent-600 hover:bg-accent-700 focus:ring-accent-700/50 h-9 px-4 py-2 text-sm font-medium rounded-md">
-          More Free Astro themes
-        </a>
-      </div>
-    </div>
+<!-- Hero 主体 -->
+<section class="bg-white pt-20 text-base-900">
+  <div class="max-w-7xl mx-auto px-8 md:px-12 lg:px-24">
+    <!-- 动态背景装饰 -->
     <div
-      class="lg:gap-x-8 lg:grid-cols-3 max-w-4xl mt-8 mx-auto sm:gap-x-6 sm:gap-y-12 sm:grid sm:grid-cols-2 sm:space-y-0 space-y-6 text-center text-sm items-start">
-      {
-        featuresList.map(({ title, description }) => (
-          <div class="text-base-500 lg:text-balance">
-            <strong class="text-base-700">{title}</strong> ━ {description}
-          </div>
-        ))
-      }
+      class="absolute -top-[10%] -right-[5%] w-[50vw] h-[50vw] bg-[radial-gradient(circle,rgba(99,102,241,0.15)_0%,rgba(168,85,247,0.05)_50%,transparent_100%)] -z-10 blur-[60px] animate-pulse-slow"
+    >
     </div>
-    <div class="relative w-full mx-auto max-w-7xl items-center py-12 pb-12">
-      <div class="p-10 bg-accent-50 rounded-2xl">
-        <OptimizedImage
-          src="/dashboard.png"
-          alt="#_"
-          width={1200}
-          height={700}
-          class="relative w-full ring-4 ring-base-50 border border-base-200 lg:rounded-2xl object-cover rounded"
-        />
+
+    <div class="flex flex-col lg:flex-row items-center gap-12 lg:gap-24">
+      <!-- 左侧：价值主张 -->
+      <div class="lg:w-1/2 text-center lg:text-left space-y-8">
+        <div
+          class="inline-flex items-center space-x-2 bg-indigo-50 text-indigo-600 px-4 py-2 rounded-full text-sm font-bold tracking-wide"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="size-4"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            ><path
+              d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"
+            ></path></svg
+          >
+          <span>全新 AI 视觉引擎 2.0 已上线</span>
+        </div>
+
+        <h1
+          class="text-5xl lg:text-7xl font-extrabold leading-[1.1] tracking-tight text-slate-900"
+        >
+          让抠图变得<br />
+          <span
+            class="bg-[linear-gradient(135deg,#1e293b_30%,#6366f1_100%)] bg-clip-text text-transparent"
+            >轻而易举</span
+          >
+        </h1>
+
+        <p
+          class="text-lg lg:text-xl text-slate-500 leading-relaxed max-w-xl mx-auto lg:mx-0"
+        >
+          只需几秒钟，即可自动消除照片背景。针对电商、证件照和社交媒体设计的专业级
+          AI 算法。
+        </p>
+
+        <!-- 特性展示 -->
+        <div class="grid grid-cols-3 gap-4 pt-4">
+          <div class="text-center lg:text-left">
+            <div class="text-2xl font-bold text-slate-900">100%</div>
+            <div
+              class="text-xs text-slate-400 font-semibold uppercase tracking-wider"
+            >
+              全自动识别
+            </div>
+          </div>
+          <div class="text-center lg:text-left">
+            <div class="text-2xl font-bold text-slate-900">HD</div>
+            <div
+              class="text-xs text-slate-400 font-semibold uppercase tracking-wider"
+            >
+              超清画质输出
+            </div>
+          </div>
+          <div class="text-center lg:text-left">
+            <div class="text-2xl font-bold text-slate-900">0$</div>
+            <div
+              class="text-xs text-slate-400 font-semibold uppercase tracking-wider"
+            >
+              免费额度
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 右侧：交互交互区 -->
+      <div class="lg:w-1/2 w-full max-w-2xl">
+        <div
+          class="bg-white/70 backdrop-blur-[20px] border border-white/50 rounded-[32px] shadow-[0_25px_50px_-12px_rgba(0,0,0,0.08)] p-4 lg:p-6"
+        >
+          <div
+            id="drop-zone"
+            class="border-2 border-dashed border-slate-300 transition-all duration-400 ease-[cubic-bezier(0.4,0,0.2,1)] bg-white/50 hover:border-indigo-500 hover:bg-white hover:-translate-y-0.5 hover:shadow-[0_12px_20px_-5px_rgba(99,102,241,0.1)] rounded-[24px] p-8 lg:p-16 flex flex-col items-center justify-center space-y-6 cursor-pointer"
+          >
+            <!-- 动态上传图标 -->
+            <div class="relative">
+              <div
+                class="absolute inset-0 bg-indigo-200 blur-2xl opacity-40 rounded-full animate-pulse"
+              >
+              </div>
+              <div
+                class="relative w-24 h-24 bg-white rounded-2xl shadow-sm border border-slate-100 flex items-center justify-center text-4xl text-indigo-600"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="size-10"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  ><rect width="18" height="18" x="3" y="3" rx="2" ry="2"
+                  ></rect><circle cx="9" cy="9" r="2"></circle><path
+                    d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"></path></svg
+                >
+                <div
+                  class="absolute -bottom-2 -right-2 w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center text-white text-sm"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="size-4"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    ><path d="M5 12h14"></path><path d="M12 5v14"></path></svg
+                  >
+                </div>
+              </div>
+            </div>
+
+            <div class="text-center space-y-2">
+              <h3 class="text-xl font-bold text-slate-800">开始上传图片</h3>
+              <p class="text-sm text-slate-400">
+                支持拖拽图片到此处，或点击浏览本地文件
+              </p>
+            </div>
+
+            <button
+              class="bg-indigo-600 hover:bg-indigo-700 text-white px-10 py-4 rounded-2xl font-bold transition-all shadow-xl shadow-indigo-100 flex items-center space-x-3 group"
+            >
+              <span>选择图片</span>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="size-4 transition-transform group-hover:translate-x-1"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                ><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg
+              >
+            </button>
+
+            <div class="pt-4 flex items-center justify-center space-x-6">
+              <div class="flex -space-x-2">
+                <img
+                  class="w-8 h-8 rounded-full border-2 border-white"
+                  src="https://i.pravatar.cc/100?img=1"
+                  alt="用户"
+                />
+                <img
+                  class="w-8 h-8 rounded-full border-2 border-white"
+                  src="https://i.pravatar.cc/100?img=2"
+                  alt="用户"
+                />
+                <img
+                  class="w-8 h-8 rounded-full border-2 border-white"
+                  src="https://i.pravatar.cc/100?img=3"
+                  alt="用户"
+                />
+              </div>
+              <p class="text-xs font-medium text-slate-400 italic">
+                已有 10k+ 用户使用该工具
+              </p>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
