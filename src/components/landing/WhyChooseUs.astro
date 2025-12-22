@@ -1,90 +1,126 @@
-<section class="bg-blue-600 py-20 text-white">
+---
+import ReviewComponent from "../React/ReviewComponent";
+---
+<section class="py-20 text-white">
   <div class="max-w-7xl mx-auto px-8 md:px-12 lg:px-24">
-    <div class="text-center mb-14">
-      <p class="text-sm leading-normal font-bold uppercase text-white">
-        Tagline
-      </p>
+    <div class="text-center max-w-3xl mx-auto mb-16 space-y-4">
       <h2
-        class="text-xl leading-tight tracking-tight sm:text-2xl md:text-3xl capitalize lg:text-4xl mt-4 font-medium text-white">
-        Features Built to Accelerate Growth
+        class="text-3xl lg:text-4xl font-extrabold text-slate-900 tracking-tight"
+      >
+        来自全球用户的信任
       </h2>
-      <p class="mt-4 text-lg text-white max-w-xl mx-auto">
-        Everything you need to launch your SaaS business.
+      <p class="text-slate-500 text-lg leading-relaxed">
+        成千上万的设计师、摄影师和电商卖家正在使用 QuickCut 提升他们的工作效率。
       </p>
     </div>
 
-    <div class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <!-- 评价 1 -->
       <div
-        class="bg-white/90 text-gray-800 p-8 rounded-2xl hover:scale-[1.025] transition ease-linear">
-        <div class="mb-4 text-accent-700">
-          <svg
-            width="32"
-            height="32"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="1.5"
-            viewBox="0 0 24 24"
-            class="">
-            <path
-              d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-4 0a1 1 0 001-1v-4a1 1 0 00-1-1h-2a1 1 0 00-1 1v4a1 1 0 001 1z"
-              stroke-linecap="round"
-              stroke-linejoin="round">
-            </path>
-          </svg>
+        class="bg-white p-8 rounded-[32px] border border-slate-100 shadow-sm hover:shadow-md transition-shadow"
+      >
+        <div class="flex items-center space-x-1 text-orange-400 mb-6 text-sm">
+          <i class="fas fa-star"></i><i class="fas fa-star"></i><i
+            class="fas fa-star"></i><i class="fas fa-star"></i><i
+            class="fas fa-star"></i>
         </div>
-        <h3 class="text-xl font-semibold mb-2">Cloud Native</h3>
-        <p class="text-base font-medium">
-          Scale globally with reliable, serverless cloud architecture.
+        <p class="text-slate-600 italic leading-relaxed mb-8">
+          “作为一名电商摄影师，我每天需要处理数百张产品图。QuickCut
+          的抠图质量让我感到惊讶，尤其是边缘的柔和处理，省去了我大量的修图时间。”
         </p>
+        <div class="flex items-center space-x-4">
+          <div
+            class="w-12 h-12 rounded-full bg-indigo-100 flex items-center justify-center overflow-hidden"
+          >
+            <img
+              src="https://i.pravatar.cc/150?u=1"
+              alt="用户"
+              class="w-full h-full object-cover"
+            />
+          </div>
+          <div>
+            <h4 class="font-bold text-slate-900">张小凡</h4>
+            <p
+              class="text-xs text-slate-400 font-medium uppercase tracking-wider"
+            >
+              独立摄影师
+            </p>
+          </div>
+        </div>
       </div>
 
+      <!-- 评价 2 -->
       <div
-        class="bg-white/90 text-gray-800 p-8 rounded-2xl hover:scale-[1.025] transition ease-linear">
-        <div class="mb-4 text-accent-700">
-          <svg
-            width="32"
-            height="32"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="1.5"
-            viewBox="0 0 24 24"
-            class="">
-            <path
-              d="M11 17a4 4 0 100-8 4 4 0 000 8zm0-10V4m0 14v-3m7-7h-3m3 0h3m-14 0H4m3 0H4"
-              stroke-linecap="round"
-              stroke-linejoin="round">
-            </path>
-          </svg>
+        class="bg-white p-8 rounded-[32px] border border-slate-100 shadow-sm hover:shadow-md transition-shadow"
+      >
+        <div class="flex items-center space-x-1 text-orange-400 mb-6 text-sm">
+          <i class="fas fa-star"></i><i class="fas fa-star"></i><i
+            class="fas fa-star"></i><i class="fas fa-star"></i><i
+            class="fas fa-star"></i>
         </div>
-        <h3 class="text-xl font-semibold mb-2">Analytics Ready</h3>
-        <p class="text-base font-medium">
-          Get actionable insights with built-in data and engagement tracking.
+        <p class="text-slate-600 italic leading-relaxed mb-8">
+          “我试过很多去背景工具，但这个 AI
+          引擎识别非常准确。即使是背景非常复杂的场景，它也能精准地把我的猫咪从杂乱的客厅里分离出来。”
         </p>
+        <div class="flex items-center space-x-4">
+          <div
+            class="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center overflow-hidden"
+          >
+            <img
+              src="https://i.pravatar.cc/150?u=2"
+              alt="用户"
+              class="w-full h-full object-cover"
+            />
+          </div>
+          <div>
+            <h4 class="font-bold text-slate-900">Linda Wang</h4>
+            <p
+              class="text-xs text-slate-400 font-medium uppercase tracking-wider"
+            >
+              自媒体博主
+            </p>
+          </div>
+        </div>
       </div>
 
+      <!-- 评价 3 -->
       <div
-        class="bg-white/90 text-gray-800 p-8 rounded-2xl hover:scale-[1.025] transition ease-linear">
-        <div class="mb-4 text-accent-700">
-          <svg
-            width="32"
-            height="32"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="1.5"
-            viewBox="0 0 24 24"
-            class="">
-            <path
-              d="M12 4v1m0 14v1m8-9h-1M5 12H4m15.36 6.36l-.707-.707M6.343 6.343l-.707-.707M18.364 6.343l-.707.707M6.343 17.657l-.707.707"
-              stroke-linecap="round"
-              stroke-linejoin="round">
-            </path>
-          </svg>
+        class="bg-white p-8 rounded-[32px] border border-slate-100 shadow-sm hover:shadow-md transition-shadow"
+      >
+        <div class="flex items-center space-x-1 text-orange-400 mb-6 text-sm">
+          <i class="fas fa-star"></i><i class="fas fa-star"></i><i
+            class="fas fa-star"></i><i class="fas fa-star"></i><i
+            class="fas fa-star"></i>
         </div>
-        <h3 class="text-xl font-semibold mb-2">Built-in Security</h3>
-        <p class="text-base font-medium">
-          Enterprise-grade protection and user privacy by default.
+        <p class="text-slate-600 italic leading-relaxed mb-8">
+          “极其惊艳的响应速度！免费版居然能提供这么高质量的 HD
+          图片下载，真的是良心产品。现在它已经是我浏览器收藏夹里的必备工具。”
         </p>
+        <div class="flex items-center space-x-4">
+          <div
+            class="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center overflow-hidden"
+          >
+            <img
+              src="https://i.pravatar.cc/150?u=3"
+              alt="用户"
+              class="w-full h-full object-cover"
+            />
+          </div>
+          <div>
+            <h4 class="font-bold text-slate-900">李华</h4>
+            <p
+              class="text-xs text-slate-400 font-medium uppercase tracking-wider"
+            >
+              UI 设计师
+            </p>
+          </div>
+        </div>
       </div>
+    </div>
+
+    <!-- 新增评价模块 -->
+    <div class="mt-16 flex justify-center">
+      <ReviewComponent client:visible />
     </div>
   </div>
 </section>
