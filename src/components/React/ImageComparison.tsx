@@ -1,4 +1,3 @@
-import React from 'react';
 import ReactCompareImage from 'react-compare-image';
 
 interface ImageComparisonProps {
@@ -13,7 +12,7 @@ export default function ImageComparison({
   className = ""
 }: ImageComparisonProps) {
   return (
-    <div className={`max-w-4xl mx-auto rounded-2xl overflow-hidden shadow-2xl ${className}`}>
+    <div className={`max-w-6xl mx-auto rounded-2xl overflow-hidden shadow-2xl ${className}`}>
       <ReactCompareImage 
         leftImage={leftImage} 
         rightImage={rightImage}
