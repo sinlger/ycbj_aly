@@ -3,6 +3,7 @@ import '@fontsource/roboto';
 import BaseHead from "../components/BaseHead.astro";
 import Navigation from "../components/global/Navigation.astro";
 import Footer from "../components/global/Footer.astro";
+import FreeTipToast from '../components/React/FreeTipToast';
 ---
 
 <html
@@ -15,5 +16,6 @@ import Footer from "../components/global/Footer.astro";
     <Navigation />
     <main class="grow"><slot /></main>
     <Footer />
+    <FreeTipToast client:load />
   </body>
 </html>
