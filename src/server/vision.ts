@@ -20,7 +20,7 @@ async function hmacSha1(key: string, data: string): Promise<string> {
 }
 
 // 主函数：调用通用分割（抠图）
-export async function segmentCommonImage(env: any, imageUrl: string) {
+export async function segmentCommonImage(env: any, imageUrl: string, returnForm?: string) {
   // 确保环境变量存在
   if (!env.ALIBABA_CLOUD_ACCESS_KEY_ID || !env.ALIBABA_CLOUD_ACCESS_KEY_SECRET) {
     throw new Error('Missing OSS credentials');
@@ -42,6 +42,12 @@ export async function segmentCommonImage(env: any, imageUrl: string) {
     // 视觉智能开放平台通常部署在上海，RegionId 固定为 cn-shanghai
     RegionId: 'cn-shanghai',
   };
+
+  // 如果有 returnForm 参数，且不是默认/通用分割，则添加到请求中
+  console.log('returnForm:', returnForm);
+  if (returnForm && !['default', 'common', 'null', 'undefined'].includes(returnForm)) {
+    params.ReturnForm = returnForm;
+  }
 
   // 按 key 字典序排序
   const sortedKeys = Object.keys(params).sort();

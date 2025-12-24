@@ -24,7 +24,7 @@ export async function uploadToOss(env: any, file: File, fileName: string) {
     // 指定Object的存储类型。
     'x-oss-storage-class': 'Standard',
     // 指定Object的访问权限。
-    'x-oss-object-acl': 'public-read', // 通常图片上传后需要公开访问，改为 public-read，或者保持 private
+    'x-oss-object-acl': 'private', // 私有访问，必须通过签名或后端代理访问
     // 指定PutObject操作时是否覆盖同名目标Object。
     'x-oss-forbid-overwrite': 'false',
   };
@@ -42,6 +42,74 @@ export async function uploadToOss(env: any, file: File, fileName: string) {
     console.error('OSS Upload Error:', e);
     throw e;
   }
+}
+
+// 获取 OSS 文件的签名 URL (用于传给 Vision API)
+export function getOssSignatureUrl(env: any, fileName: string) {
+  if (!env.ALIBABA_CLOUD_ACCESS_KEY_ID || !env.ALIBABA_CLOUD_ACCESS_KEY_SECRET) {
+    throw new Error('Missing OSS credentials');
+  }
+  const client = new OSS({
+    region: env.OSS_REGION,
+    accessKeyId: env.ALIBABA_CLOUD_ACCESS_KEY_ID,
+    accessKeySecret: env.ALIBABA_CLOUD_ACCESS_KEY_SECRET,
+    bucket: env.OSS_BUCKET,
+    secure: true,
+  });
+  // 生成签名 URL，默认有效期 1800 秒 (30分钟)
+  return client.signatureUrl(fileName, { expires: 1800 });
+}
+
+// 从 OSS 获取文件流 (用于后端代理)
+export async function getOssFile(env: any, fileName: string) {
+  if (!env.ALIBABA_CLOUD_ACCESS_KEY_ID || !env.ALIBABA_CLOUD_ACCESS_KEY_SECRET) {
+    throw new Error('Missing OSS credentials');
+  }
+  const client = new OSS({
+    region: env.OSS_REGION,
+    accessKeyId: env.ALIBABA_CLOUD_ACCESS_KEY_ID,
+    accessKeySecret: env.ALIBABA_CLOUD_ACCESS_KEY_SECRET,
+    bucket: env.OSS_BUCKET,
+    secure: true,
+  });
+  
+  try {
+    const result = await client.get(fileName);
+    return result.content;
+  } catch (e) {
+    console.error('OSS Get Error:', e);
+    throw e;
+  }
+}
+
+// 下载 URL 内容并上传到 OSS
+export async function saveUrlToOss(env: any, url: string, fileName: string) {
+  if (!env.ALIBABA_CLOUD_ACCESS_KEY_ID || !env.ALIBABA_CLOUD_ACCESS_KEY_SECRET) {
+    throw new Error('Missing OSS credentials');
+  }
+  
+  // 下载内容
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(`Failed to fetch URL: ${res.statusText}`);
+  const arrayBuffer = await res.arrayBuffer();
+  const buffer = Buffer.from(arrayBuffer);
+
+  const client = new OSS({
+    region: env.OSS_REGION,
+    accessKeyId: env.ALIBABA_CLOUD_ACCESS_KEY_ID,
+    accessKeySecret: env.ALIBABA_CLOUD_ACCESS_KEY_SECRET,
+    bucket: env.OSS_BUCKET,
+    secure: true,
+  });
+
+  // 上传 (Private)
+  const result = await client.put(fileName, buffer, {
+    headers: {
+      'x-oss-object-acl': 'private',
+      'x-oss-forbid-overwrite': 'false',
+    }
+  });
+  return result;
 }
 //返回成功示例
 // {

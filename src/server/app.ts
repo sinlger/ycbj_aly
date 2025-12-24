@@ -1,6 +1,6 @@
 import { OpenAPIHono, createRoute, z } from '@hono/zod-openapi';
 import { apiReference } from '@scalar/hono-api-reference';
-import { uploadToOss } from './oss';
+import { uploadToOss, getOssFile, getOssSignatureUrl, saveUrlToOss } from './oss';
 import { segmentCommonImage } from './vision';
 
 // 定义环境变量类型
@@ -49,6 +49,50 @@ app.openapi(helloRoute, (c) => {
   });
 });
 
+// 1.5 Image Proxy Route
+const imageProxyRoute = createRoute({
+  method: 'get',
+  path: '/api/image/:key',
+  request: {
+    params: z.object({
+      key: z.string().openapi({ description: 'Image Key (Filename)' }),
+    }),
+  },
+  responses: {
+    200: {
+      description: 'Image Content',
+      content: {
+        'image/*': {
+          schema: z.string().openapi({ format: 'binary' }),
+        },
+      },
+    },
+    404: { description: 'Not Found' },
+    500: { description: 'Server Error' },
+  },
+});
+
+app.openapi(imageProxyRoute, async (c) => {
+  try {
+    const key = c.req.param('key');
+    const content = await getOssFile(c.env, key);
+    
+    // Determine content type (simple check)
+    let contentType = 'application/octet-stream';
+    if (key.endsWith('.png')) contentType = 'image/png';
+    else if (key.endsWith('.jpg') || key.endsWith('.jpeg')) contentType = 'image/jpeg';
+    else if (key.endsWith('.webp')) contentType = 'image/webp';
+
+    return c.body(content, 200, {
+      'Content-Type': contentType,
+      'Cache-Control': 'public, max-age=31536000', // Cache for performance
+    });
+  } catch (e) {
+    console.error('Proxy Error:', e);
+    return c.json({ error: 'Image not found or error' }, 404);
+  }
+});
+
 // 2. Upload Route
 const uploadRoute = createRoute({
   method: 'post',
@@ -62,6 +106,11 @@ const uploadRoute = createRoute({
               type: 'string',
               format: 'binary',
               description: 'File to upload'
+            }),
+            returnForm: z.enum(['mask', 'whiteBK', 'crop']).optional().openapi({
+              description: 'Return form of the segmented image',
+              example: 'crop',
+              default: 'crop'
             }),
           }),
         },
@@ -113,6 +162,7 @@ app.openapi(uploadRoute, async (c) => {
   try {
     const body = await c.req.parseBody();
     const file = body['file'];
+    const returnForm = body['returnForm'] as string | undefined;
 
     if (!file || !(file instanceof File)) {
       return c.json({ success: false, error: 'No file uploaded' }, 400);
@@ -121,32 +171,41 @@ app.openapi(uploadRoute, async (c) => {
     // 生成文件名
     const fileName = `${Date.now()}-${file.name}`;
     
-    // 上传到 OSS
+    // 上传到 OSS (Private)
     const result = await uploadToOss(c.env, file, fileName);
-    const imageUrl = (result as any).url;
+    // result.url is raw OSS URL, we won't use it directly for public access anymore.
+    
+    // 生成签名 URL 用于 Vision API
+    const signedUrl = getOssSignatureUrl(c.env, fileName);
 
-    // 如果上传成功且有 URL，自动调用分割接口
+    // 自动调用分割接口
     let maskUrl: string | undefined;
     let requestId: string | undefined;
 
-    if (imageUrl) {
+    if (signedUrl) {
       try {
-        const segmentResult = await segmentCommonImage(c.env, imageUrl);
-        maskUrl = segmentResult.maskUrl;
+        const segmentResult = await segmentCommonImage(c.env, signedUrl, returnForm);
+        // segmentResult.maskUrl 是 Vision API 返回的临时链接
+        
+        if (segmentResult.maskUrl) {
+            // 下载 mask 并转存到 OSS (Private)
+            // 假设结果是 PNG (通常是)
+            const maskFileName = `processed-${Date.now()}.png`; 
+            
+            await saveUrlToOss(c.env, segmentResult.maskUrl, maskFileName);
+            maskUrl = `/api/image/${maskFileName}`; // 使用代理地址
+        }
         requestId = segmentResult.requestId;
       } catch (segmentError: any) {
         console.error('Auto-segmentation failed:', segmentError);
-        // 分割失败不应阻断上传成功的响应，但可以在日志中记录
-        // 或者，如果你希望分割失败算作整体失败，可以在这里抛出异常
-        // 目前策略：返回上传成功，但 maskUrl 为空，前端可以根据 maskUrl 判断分割是否成功
       }
     }
 
     return c.json({ 
       success: true, 
       name: (result as any).name || fileName,
-      url: imageUrl,
-      maskUrl: maskUrl,
+      url: `/api/image/${fileName}`, // 原图代理地址
+      maskUrl: maskUrl, // 结果图代理地址
       requestId: requestId,
       data: result 
     });
@@ -168,6 +227,11 @@ const segmentRoute = createRoute({
             imageUrl: z.string().url().openapi({
               description: 'Image URL to segment',
               example: 'https://imgfx.oss-cn-shanghai.aliyuncs.com/1766152414047-beauty-8870258_1280.png'
+            }),
+            returnForm: z.enum(['mask', 'whiteBK', 'crop']).optional().openapi({
+              description: 'Return form of the segmented image',
+              example: 'crop',
+              default: 'crop'
             }),
           }),
         },
@@ -214,13 +278,13 @@ const segmentRoute = createRoute({
 
 app.openapi(segmentRoute, async (c) => {
   try {
-    const { imageUrl } = await c.req.json();
+    const { imageUrl, returnForm } = await c.req.json();
     
     if (!imageUrl) {
       return c.json({ success: false, error: 'imageUrl is required' }, 400);
     }
 
-    const result = await segmentCommonImage(c.env, imageUrl);
+    const result = await segmentCommonImage(c.env, imageUrl, returnForm);
 
     return c.json({ 
       success: true, 
