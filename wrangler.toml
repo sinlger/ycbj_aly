@@ -3,6 +3,11 @@ compatibility_date = "2024-09-23"
 compatibility_flags = ["nodejs_compat"]
 pages_build_output_dir = "dist"
 
+[[d1_databases]]
+binding = "bgremove"
+database_name = "bgremove"
+database_id = "5824e53a-3ebd-4d0b-a929-c57bf0422b5f"
+
 [vars]
 # OSS Configuration (Placeholders - Set actual values in .dev.vars or Cloudflare Dashboard)
 # ALIBABA_CLOUD_ACCESS_KEY_ID = ""

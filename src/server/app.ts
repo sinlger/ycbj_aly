@@ -11,6 +11,8 @@ type Bindings = {
   ALIBABA_POWER_ACCESS_KEY_SECRET: string;
   OSS_REGION?: string;
   OSS_BUCKET?: string;
+  TURNSTILE_SECRET_KEY: string;
+  bgremove: any;
 };
 
 // 使用 OpenAPIHono
@@ -158,14 +160,52 @@ const uploadRoute = createRoute({
   },
 });
 
-app.openapi(uploadRoute, async (c) => {
+  app.openapi(uploadRoute, async (c) => {
   try {
     const body = await c.req.parseBody();
     const file = body['file'];
     const returnForm = body['returnForm'] as string | undefined;
+    const fingerprint = body['fingerprint'] as string | undefined;
+    const cf_token = body['cf_token'] as string | undefined;
 
     if (!file || !(file instanceof File)) {
       return c.json({ success: false, error: 'No file uploaded' }, 400);
+    }
+
+    // --- 1. 校验 Turnstile (防止脚本直接刷接口) ---
+    // 只有当提供了 token 时才验证 (为了兼容性，或者强制验证)
+    // 这里强制验证
+    if (!cf_token || !fingerprint) {
+       return c.json({ success: false, error: 'Missing security tokens' }, 403);
+    }
+
+    const clientIP = c.req.header('cf-connecting-ip') || '127.0.0.1';
+    const today = new Date().toISOString().split('T')[0];
+
+    const verifyResponse = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
+        method: 'POST',
+        headers: { 'content-type': 'application/x-www-form-urlencoded' },
+        body: `secret=${c.env.TURNSTILE_SECRET_KEY}&response=${cf_token}&remoteip=${clientIP}`
+    });
+    const verifyResult: any = await verifyResponse.json();
+    if (!verifyResult.success) {
+        return c.json({ success: false, error: 'Turnstile validation failed' }, 403);
+    }
+
+    // --- 2. 检查 D1 数据库额度 ---
+    // 假设 D1 绑定名为 bgremove
+    try {
+      const record = await c.env.bgremove.prepare(
+          "SELECT used_count FROM usage_control WHERE fp_id = ? AND day_date = ?"
+      ).bind(fingerprint, today).first();
+
+      if (record && record.used_count >= 3) {
+          return c.json({ success: false, error: 'Quota Exceeded' }, 429);
+      }
+    } catch (d1Error) {
+      console.error('D1 Check Error:', d1Error);
+      // 如果数据库出错，是否允许通过？暂时允许，或者返回错误
+      // return c.json({ success: false, error: 'Database error' }, 500);
     }
 
     // 生成文件名
@@ -196,6 +236,16 @@ app.openapi(uploadRoute, async (c) => {
             maskUrl = `/api/image/${maskFileName}`; // 使用代理地址
         }
         requestId = segmentResult.requestId;
+
+        // --- 4. 扣除额度 (写入/更新数据库) ---
+        // 只有成功处理才扣除
+        await c.env.bgremove.prepare(`
+            INSERT INTO usage_control (fp_id, user_ip, day_date, used_count)
+            VALUES (?, ?, ?, 1)
+            ON CONFLICT(fp_id, day_date)
+            DO UPDATE SET used_count = used_count + 1
+        `).bind(fingerprint, clientIP, today).run();
+
       } catch (segmentError: any) {
         console.error('Auto-segmentation failed:', segmentError);
       }
