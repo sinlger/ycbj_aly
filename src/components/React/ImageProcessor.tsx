@@ -61,20 +61,23 @@ export default function ImageProcessor() {
   // 第三步：提交至后端
   const handleSubmit = async () => {
     if (!selectedFile) return;
+
+    if (!turnstileToken) {
+      alert("请先完成人机验证");
+      return;
+    }
+
     setStep(3);
-    // const fpPromise = FingerprintJS.load().then(fp => fp.get());
-    // const { visitorId } = await fpPromise;
-    // const turnstileToken = turnstile.getResponse();
-    // if (!turnstileToken) {
-    //   alert("请先完成人机验证");
-    //   return;
-    // }
     try {
       const formData = new FormData();
       formData.append('file', selectedFile);
       if (config.returnForm) {
         formData.append('returnForm', config.returnForm);
       }
+
+      // 添加安全令牌
+      formData.append('cf_token', turnstileToken);
+      formData.append('fingerprint', visitorId);
 
       const res = await fetch('/api/upload', {
         method: 'POST',
@@ -89,17 +92,33 @@ export default function ImageProcessor() {
           // 使用后端返回的原图代理地址，确保不直接暴露 OSS
           if (data.url) setOriginalImage(data.url);
           setStep(4);
+          // 触发使用次数更新事件
+          window.dispatchEvent(new CustomEvent('usage-updated'));
         } else {
           alert('处理成功但未返回结果图片，请稍后重试');
           setStep(2);
         }
       } else {
-        alert('处理失败: ' + (data.error || '未知错误'));
+        const errorMsg = data.error || '未知错误';
+        // 使用自定义 Toast 显示错误信息
+        window.dispatchEvent(new CustomEvent('show-toast', {
+          detail: {
+            title: "处理失败",
+            content: errorMsg,
+            type: "error"
+          }
+        }));
         setStep(2);
       }
     } catch (e) {
       console.error(e);
-      alert('网络请求失败');
+      window.dispatchEvent(new CustomEvent('show-toast', {
+        detail: {
+          title: "网络错误",
+          content: "请求失败，请检查网络连接",
+          type: "error"
+        }
+      }));
       setStep(2);
     }
   };
@@ -196,24 +215,28 @@ export default function ImageProcessor() {
                 </div>
 
                 <div className="mt-8 pt-8 border-t border-slate-100 space-y-3">
-                  <div className="flex justify-center">
-                     {/* 请将 siteKey 替换为你的 Cloudflare Turnstile Site Key. 测试 Key: 1x00000000000000000000AA */}
-                    <Turnstile 
-                      siteKey="1x00000000000000000000AA" 
+                  {turnstileToken && (
+                    <>
+                      <button
+                        onClick={handleSubmit}
+                        disabled={step === 3}
+                        className="w-full bg-indigo-600 text-white py-3.5 rounded-xl font-bold hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-200 hover:shadow-indigo-300 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
+                      >
+                        <span>开始智能抠图</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m5 12 7-7 7 7" /><path d="M12 19V5" /></svg>
+                      </button>
+                      <button onClick={() => setStep(1)} className="w-full py-3 text-slate-400 text-sm font-medium hover:text-slate-600 transition-colors">
+                        重新上传图片
+                      </button>
+                    </>
+                  )}
+                  <div className={`flex justify-center ${turnstileToken ? 'hidden' : ''}`}>
+                    {/* 请将 siteKey 替换为你的 Cloudflare Turnstile Site Key. 测试 Key: 1x00000000000000000000AA */}
+                    <Turnstile
+                      siteKey={import.meta.env.PUBLIC_TURNSTILE_SITE_KEY || "1x00000000000000000000AA"}
                       onSuccess={setTurnstileToken}
                     />
                   </div>
-                  <button
-                    onClick={handleSubmit}
-                    disabled={step === 3}
-                    className="w-full bg-indigo-600 text-white py-3.5 rounded-xl font-bold hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-200 hover:shadow-indigo-300 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
-                  >
-                    <span>开始智能抠图</span>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m5 12 7-7 7 7" /><path d="M12 19V5" /></svg>
-                  </button>
-                  <button onClick={() => setStep(1)} className="w-full py-3 text-slate-400 text-sm font-medium hover:text-slate-600 transition-colors">
-                    重新上传图片
-                  </button>
                 </div>
               </div>
             </div>

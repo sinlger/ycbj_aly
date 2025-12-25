@@ -347,6 +347,71 @@ app.openapi(segmentRoute, async (c) => {
   }
 });
 
+// 4. Usage Route
+const usageRoute = createRoute({
+  method: 'post',
+  path: '/api/usage',
+  request: {
+    body: {
+      content: {
+        'application/json': {
+          schema: z.object({
+            visitorId: z.string().openapi({ description: 'Visitor Fingerprint ID' }),
+          }),
+        },
+      },
+    },
+  },
+  responses: {
+    200: {
+      description: 'Get usage count',
+      content: {
+        'application/json': {
+          schema: z.object({
+            success: z.boolean(),
+            used_count: z.number(),
+            remaining_count: z.number(),
+          }),
+        },
+      },
+    },
+    500: {
+      description: 'Server Error',
+      content: {
+        'application/json': {
+          schema: z.object({
+            success: z.boolean(),
+            error: z.string(),
+          }),
+        },
+      },
+    },
+  },
+});
+
+app.openapi(usageRoute, async (c) => {
+  try {
+    const { visitorId } = await c.req.json();
+    const today = new Date().toISOString().split('T')[0];
+
+    const record = await c.env.bgremove.prepare(
+      "SELECT used_count FROM usage_control WHERE fp_id = ? AND day_date = ?"
+    ).bind(visitorId, today).first();
+
+    const used_count = record ? record.used_count : 0;
+    const remaining_count = Math.max(0, 3 - used_count);
+
+    return c.json({
+      success: true,
+      used_count,
+      remaining_count,
+    });
+  } catch (e: any) {
+    console.error('Usage Check Error:', e);
+    return c.json({ success: false, error: e.message || 'Failed to check usage' }, 500);
+  }
+});
+
 // --- Documentation ---
 
 // OpenAPI Specification JSON

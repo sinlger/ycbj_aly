@@ -1,0 +1,107 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+---
+
+<BaseLayout>
+    <div class="relative py-24 sm:py-32 overflow-hidden bg-slate-50">
+        {/* 背景装饰 */}
+        <div class="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full max-w-7xl pointer-events-none">
+            <div class="absolute top-20 right-0 w-[500px] h-[500px] bg-indigo-100/40 rounded-full blur-3xl mix-blend-multiply opacity-70 animate-blob"></div>
+            <div class="absolute top-40 left-0 w-[500px] h-[500px] bg-blue-100/40 rounded-full blur-3xl mix-blend-multiply opacity-70 animate-blob animation-delay-2000"></div>
+        </div>
+
+        <div class="relative max-w-4xl mx-auto px-6 lg:px-8">
+            {/* 页面标题 */}
+            <div class="text-center mb-16 animate-in fade-in slide-in-from-bottom-4 duration-700">
+                <h1 class="text-4xl font-black tracking-tight text-slate-900 sm:text-5xl mb-4">
+                    服务条款
+                </h1>
+                <p class="text-lg leading-8 text-slate-600">
+                    最后更新时间：{new Date().toLocaleDateString('zh-CN')}
+                </p>
+            </div>
+
+            {/* 主要内容卡片 */}
+            <div class="bg-white/80 backdrop-blur-xl rounded-[2.5rem] shadow-xl shadow-indigo-100/50 p-8 md:p-12 lg:p-16 border border-white animate-in fade-in slide-in-from-bottom-8 duration-700 delay-150">
+                <div class="prose prose-slate prose-lg max-w-none space-y-16">
+                    
+                    {/* 01 接受条款 */}
+                    <section className="relative group">
+                        <div class="absolute -left-4 -top-4 w-12 h-12 bg-indigo-50 rounded-2xl -z-10 group-hover:scale-110 transition-transform duration-300"></div>
+                        <h2 class="text-2xl font-bold text-slate-900 flex items-center gap-4 mb-6">
+                            <span class="flex items-center justify-center w-10 h-10 rounded-xl bg-indigo-600 text-white text-sm font-bold shadow-lg shadow-indigo-200">01</span>
+                            接受条款
+                        </h2>
+                        <p class="text-slate-600 leading-relaxed">
+                            欢迎使用 QuickCut AI。通过访问或使用我们的网站及相关 AI 图像处理服务，即表示您同意受本服务条款的约束。如果您不同意这些条款的任何部分，请停止使用本服务。
+                        </p>
+                    </section>
+
+                    {/* 02 服务说明 */}
+                    <section className="relative group">
+                        <div class="absolute -left-4 -top-4 w-12 h-12 bg-blue-50 rounded-2xl -z-10 group-hover:scale-110 transition-transform duration-300"></div>
+                        <h2 class="text-2xl font-bold text-slate-900 flex items-center gap-4 mb-6">
+                            <span class="flex items-center justify-center w-10 h-10 rounded-xl bg-blue-600 text-white text-sm font-bold shadow-lg shadow-blue-200">02</span>
+                            服务说明
+                        </h2>
+                        <p class="text-slate-600 leading-relaxed mb-6">
+                            QuickCut AI 提供基于人工智能技术的图像分割、背景移除及处理服务。我们不断优化算法以提升精度，但不对处理结果的绝对准确性或特定用途的适用性做担保。
+                        </p>
+                        <div class="grid sm:grid-cols-2 gap-4">
+                            <div class="p-4 rounded-2xl bg-slate-50 border border-slate-100 hover:border-indigo-100 transition-colors">
+                                <h3 class="font-bold text-slate-900 mb-2 flex items-center gap-2">
+                                    <span class="w-2 h-2 rounded-full bg-indigo-500"></span>
+                                    普通模式
+                                </h3>
+                                <p class="text-sm text-slate-500">适用于日常图片快速处理，单文件上限支持 3MB。</p>
+                            </div>
+                            <div class="p-4 rounded-2xl bg-slate-50 border border-slate-100 hover:border-indigo-100 transition-colors">
+                                <h3 class="font-bold text-slate-900 mb-2 flex items-center gap-2">
+                                    <span class="w-2 h-2 rounded-full bg-blue-500"></span>
+                                    超清模式
+                                </h3>
+                                <p class="text-sm text-slate-500">提供更高精度的发丝级处理效果，支持最大 40MB 原图。</p>
+                            </div>
+                        </div>
+                    </section>
+
+                    {/* 03 用户内容与所有权 */}
+                    <section className="relative group">
+                        <div class="absolute -left-4 -top-4 w-12 h-12 bg-indigo-50 rounded-2xl -z-10 group-hover:scale-110 transition-transform duration-300"></div>
+                        <h2 class="text-2xl font-bold text-slate-900 flex items-center gap-4 mb-6">
+                            <span class="flex items-center justify-center w-10 h-10 rounded-xl bg-indigo-600 text-white text-sm font-bold shadow-lg shadow-indigo-200">03</span>
+                            用户内容与所有权
+                        </h2>
+                        <p class="text-slate-600 leading-relaxed">
+                            您保留对上传到 QuickCut AI 的原始图像的所有权。通过使用我们的服务，您授予我们一项全球性的、非独占的许可，仅用于为您生成处理结果。我们不会将您的图像用于训练公开模型，除非获得您的明确许可。
+                        </p>
+                        <div class="mt-6 py-1 px-6 bg-amber-50/50 rounded-3xl border border-amber-100/50 flex items-start gap-4 backdrop-blur-sm">
+
+                            <p class="text-amber-900/80 text-sm leading-relaxed font-medium pt-1.5">
+                                用户必须确保对上传的图像拥有合法权利。严禁上传任何涉及侵权、色情、暴力或违反法律法规的内容。
+                            </p>
+                        </div>
+                    </section>
+
+                    {/* 04 责任限制 */}
+                    <section className="relative group">
+                        <div class="absolute -left-4 -top-4 w-12 h-12 bg-slate-100 rounded-2xl -z-10 group-hover:scale-110 transition-transform duration-300"></div>
+                        <h2 class="text-2xl font-bold text-slate-900 flex items-center gap-4 mb-6">
+                            <span class="flex items-center justify-center w-10 h-10 rounded-xl bg-slate-800 text-white text-sm font-bold shadow-lg shadow-slate-200">04</span>
+                            责任限制
+                        </h2>
+                        <p class="text-slate-600 leading-relaxed italic border-l-4 border-slate-200 pl-6 py-2 bg-slate-50/50 rounded-r-xl">
+                            在法律允许的最大范围内，QuickCut AI 不对任何因使用或无法使用服务而导致的间接、偶然、特殊或惩罚性损害负责。
+                        </p>
+                    </section>
+
+                    <section class="pt-12 border-t border-slate-100 text-center">
+                        <p class="text-slate-500 font-medium">
+                            如有任何疑问，请联系 <a href="mailto:support@quickcutai.com" class="text-indigo-600 font-bold hover:text-indigo-700 hover:underline transition-colors">support@quickcutai.com</a>
+                        </p>
+                    </section>
+                </div>
+            </div>
+        </div>
+    </div>
+</BaseLayout>
