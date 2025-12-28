@@ -28,7 +28,7 @@ Desktop.ini
 
 # Cloudflare
 .wrangler/
-
+wrangler.toml
 # Editors
 .vscode/
 .idea/
