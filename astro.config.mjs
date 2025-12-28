@@ -5,7 +5,11 @@ import tailwindcss from "@tailwindcss/vite";
 import react from "@astrojs/react";
 export default defineConfig({
   output: "server",
-  adapter: cloudflare(),
+  adapter: cloudflare({
+    platformProxy: {
+      enabled: true, // 开启本地开发时的 D1/KV 模拟
+    },
+  }),
   site: "https://yoursite.com",
   /*
   experimental: {
