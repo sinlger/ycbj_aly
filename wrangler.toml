@@ -6,7 +6,11 @@ pages_build_output_dir = "dist"
 [[d1_databases]]
 binding = "bgremove"
 database_name = "bgremove"
-database_id = "5824e53a-3ebd-4d0b-a929-c57bf0422b5f"
+database_id = "5824e53a-3ebd-4d0b-a929-c57bf0422b5f" # 请替换为你实际创建的 Database ID
+
+[[kv_namespaces]]
+binding = "SESSION"
+id = "5542c1da653e40d0a4c0b73097b1c274" # 请替换为你实际创建的 KV Namespace ID
 
 [vars]
 # OSS Configuration (Placeholders - Set actual values in .dev.vars or Cloudflare Dashboard)
