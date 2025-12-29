@@ -216,7 +216,7 @@ const uploadRoute = createRoute({
     // result.url is raw OSS URL, we won't use it directly for public access anymore.
     
     // 生成签名 URL 用于 Vision API
-    const signedUrl = getOssSignatureUrl(c.env, fileName);
+    const signedUrl = await getOssSignatureUrl(c.env, fileName);
 
     // 自动调用分割接口
     let maskUrl: string | undefined;

@@ -1,43 +1,67 @@
-import OSS from 'ali-oss';
+import { S3Client, PutObjectCommand, GetObjectCommand } from "@aws-sdk/client-s3";
 
-export async function uploadToOss(env: any, file: File, fileName: string) {
-  // 确保环境变量存在
+// Helper to create S3 Client
+function getClient(env: any) {
   if (!env.ALIBABA_CLOUD_ACCESS_KEY_ID || !env.ALIBABA_CLOUD_ACCESS_KEY_SECRET) {
     throw new Error('Missing OSS credentials');
   }
+  
+  // Construct endpoint manually to ensure it points to Aliyun OSS
+  // env.OSS_REGION typically is like 'oss-cn-shanghai'
+  const region = env.OSS_REGION || 'oss-cn-shanghai';
+  const endpoint = `https://${region}.aliyuncs.com`;
 
-  const client = new OSS({
-    // yourregion填写Bucket所在地域。以华东1（杭州）为例，Region填写为oss-cn-hangzhou。
-    region: env.OSS_REGION,
-    // 从环境变量中获取访问凭证。
-    accessKeyId: env.ALIBABA_CLOUD_ACCESS_KEY_ID,
-    accessKeySecret: env.ALIBABA_CLOUD_ACCESS_KEY_SECRET,
-    authorizationV4: true,
-    // 填写Bucket名称。
-    bucket: env.OSS_BUCKET,
-    // 如果在 Cloudflare Workers 中运行，建议使用 secure: true
-    secure: true,
+  return new S3Client({
+    region: region,
+    endpoint: endpoint,
+    credentials: {
+      accessKeyId: env.ALIBABA_CLOUD_ACCESS_KEY_ID,
+      secretAccessKey: env.ALIBABA_CLOUD_ACCESS_KEY_SECRET,
+    },
+    forcePathStyle: false, // OSS supports virtual-hosted style
+  });
+}
+
+// HMAC-SHA1 signature for manual OSS URL generation
+async function hmacSha1(key: string, data: string) {
+  const encoder = new TextEncoder();
+  const keyBuf = encoder.encode(key);
+  const dataBuf = encoder.encode(data);
+  const cryptoKey = await crypto.subtle.importKey(
+      'raw', keyBuf, { name: 'HMAC', hash: 'SHA-1' }, false, ['sign']
+  );
+  const sig = await crypto.subtle.sign('HMAC', cryptoKey, dataBuf);
+  return btoa(String.fromCharCode(...new Uint8Array(sig)));
+}
+
+export async function uploadToOss(env: any, file: File, fileName: string) {
+  const client = getClient(env);
+  const arrayBuffer = await file.arrayBuffer();
+  
+  // Use Uint8Array which is compatible with AWS SDK
+  const body = new Uint8Array(arrayBuffer);
+
+  const command = new PutObjectCommand({
+    Bucket: env.OSS_BUCKET,
+    Key: fileName,
+    Body: body,
+    ContentType: file.type,
+    ACL: 'private', // Match original logic
+    Metadata: {
+      'x-oss-forbid-overwrite': 'false'
+    }
   });
 
-  // 自定义请求头
-  const headers = {
-    // 指定Object的存储类型。
-    'x-oss-storage-class': 'Standard',
-    // 指定Object的访问权限。
-    'x-oss-object-acl': 'private', // 私有访问，必须通过签名或后端代理访问
-    // 指定PutObject操作时是否覆盖同名目标Object。
-    'x-oss-forbid-overwrite': 'false',
-  };
-
   try {
-    // 将 File 转为 Buffer
-    const arrayBuffer = await file.arrayBuffer();
-    const buffer = Buffer.from(arrayBuffer);
-
-    // 上传
-    // 填写OSS文件完整路径
-    const result = await client.put(fileName, buffer, { headers });
-    return result;
+    const result = await client.send(command);
+    return {
+      name: fileName,
+      res: {
+        status: 200, // Mock status
+        headers: result.$metadata.httpHeaders
+      },
+      ...result
+    };
   } catch (e) {
     console.error('OSS Upload Error:', e);
     throw e;
@@ -45,37 +69,39 @@ export async function uploadToOss(env: any, file: File, fileName: string) {
 }
 
 // 获取 OSS 文件的签名 URL (用于传给 Vision API)
-export function getOssSignatureUrl(env: any, fileName: string) {
-  if (!env.ALIBABA_CLOUD_ACCESS_KEY_ID || !env.ALIBABA_CLOUD_ACCESS_KEY_SECRET) {
-    throw new Error('Missing OSS credentials');
-  }
-  const client = new OSS({
-    region: env.OSS_REGION,
-    accessKeyId: env.ALIBABA_CLOUD_ACCESS_KEY_ID,
-    accessKeySecret: env.ALIBABA_CLOUD_ACCESS_KEY_SECRET,
-    bucket: env.OSS_BUCKET,
-    secure: true,
-  });
-  // 生成签名 URL，默认有效期 1800 秒 (30分钟)
-  return client.signatureUrl(fileName, { expires: 1800 });
+// 改用阿里云原生签名算法，避免 AWS SDK 兼容性问题
+export async function getOssSignatureUrl(env: any, fileName: string) {
+  const bucket = env.OSS_BUCKET;
+  const region = env.OSS_REGION || 'oss-cn-shanghai';
+  
+  const expires = Math.floor(Date.now() / 1000) + 1800; // 30 mins
+  const resource = `/${bucket}/${fileName}`;
+  const stringToSign = `GET\n\n\n${expires}\n${resource}`;
+  const signature = await hmacSha1(env.ALIBABA_CLOUD_ACCESS_KEY_SECRET, stringToSign);
+  
+  // 构造标准 OSS 签名 URL
+  // 格式: https://bucket.region.aliyuncs.com/object?OSSAccessKeyId=...&Expires=...&Signature=...
+  const url = `https://${bucket}.${region}.aliyuncs.com/${fileName}?OSSAccessKeyId=${env.ALIBABA_CLOUD_ACCESS_KEY_ID}&Expires=${expires}&Signature=${encodeURIComponent(signature)}`;
+  
+  return url;
 }
 
 // 从 OSS 获取文件流 (用于后端代理)
 export async function getOssFile(env: any, fileName: string) {
-  if (!env.ALIBABA_CLOUD_ACCESS_KEY_ID || !env.ALIBABA_CLOUD_ACCESS_KEY_SECRET) {
-    throw new Error('Missing OSS credentials');
-  }
-  const client = new OSS({
-    region: env.OSS_REGION,
-    accessKeyId: env.ALIBABA_CLOUD_ACCESS_KEY_ID,
-    accessKeySecret: env.ALIBABA_CLOUD_ACCESS_KEY_SECRET,
-    bucket: env.OSS_BUCKET,
-    secure: true,
+  const client = getClient(env);
+  const command = new GetObjectCommand({
+    Bucket: env.OSS_BUCKET,
+    Key: fileName,
   });
-  
+
   try {
-    const result = await client.get(fileName);
-    return result.content;
+    const response = await client.send(command);
+    if (!response.Body) {
+      throw new Error('Empty body');
+    }
+    // Return ReadableStream or Uint8Array. 
+    // transformToByteArray is available in newer SDK versions and works in Workers
+    return await response.Body.transformToByteArray();
   } catch (e) {
     console.error('OSS Get Error:', e);
     throw e;
@@ -84,72 +110,24 @@ export async function getOssFile(env: any, fileName: string) {
 
 // 下载 URL 内容并上传到 OSS
 export async function saveUrlToOss(env: any, url: string, fileName: string) {
-  if (!env.ALIBABA_CLOUD_ACCESS_KEY_ID || !env.ALIBABA_CLOUD_ACCESS_KEY_SECRET) {
-    throw new Error('Missing OSS credentials');
-  }
-  
   // 下载内容
   const res = await fetch(url);
   if (!res.ok) throw new Error(`Failed to fetch URL: ${res.statusText}`);
   const arrayBuffer = await res.arrayBuffer();
-  const buffer = Buffer.from(arrayBuffer);
+  const body = new Uint8Array(arrayBuffer);
 
-  const client = new OSS({
-    region: env.OSS_REGION,
-    accessKeyId: env.ALIBABA_CLOUD_ACCESS_KEY_ID,
-    accessKeySecret: env.ALIBABA_CLOUD_ACCESS_KEY_SECRET,
-    bucket: env.OSS_BUCKET,
-    secure: true,
+  const client = getClient(env);
+  const command = new PutObjectCommand({
+    Bucket: env.OSS_BUCKET,
+    Key: fileName,
+    Body: body,
+    ACL: 'private',
   });
 
-  // 上传 (Private)
-  const result = await client.put(fileName, buffer, {
-    headers: {
-      'x-oss-object-acl': 'private',
-      'x-oss-forbid-overwrite': 'false',
-    }
-  });
-  return result;
+  const result = await client.send(command);
+  return {
+    name: fileName,
+    res: { status: 200 },
+    ...result
+  };
 }
-//返回成功示例
-// {
-//   "success": true,
-//   "name": "1766152414047-beauty-8870258_1280.png",
-//   "url": "https://imgfx.oss-cn-shanghai.aliyuncs.com/1766152414047-beauty-8870258_1280.png",
-//   "data": {
-//     "name": "1766152414047-beauty-8870258_1280.png",
-//     "url": "https://imgfx.oss-cn-shanghai.aliyuncs.com/1766152414047-beauty-8870258_1280.png",
-//     "res": {
-//       "status": 200,
-//       "statusCode": 200,
-//       "statusMessage": "OK",
-//       "headers": {
-//         "server": "AliyunOSS",
-//         "date": "Fri, 19 Dec 2025 13:53:33 GMT",
-//         "content-length": "0",
-//         "connection": "keep-alive",
-//         "x-oss-request-id": "694558DD9082053235AE287C",
-//         "etag": "\"66C732559760C5BDF1218DCBCBC9E2BB\"",
-//         "x-oss-hash-crc64ecma": "10354808817510581238",
-//         "content-md5": "ZscyVZdgxb3xIY3Ly8niuw==",
-//         "x-oss-server-time": "97"
-//       },
-//       "size": 0,
-//       "aborted": false,
-//       "rt": 359,
-//       "keepAliveSocket": false,
-//       "data": {
-//         "type": "Buffer",
-//         "data": []
-//       },
-//       "requestUrls": [
-//         "https://imgfx.oss-cn-shanghai.aliyuncs.com/1766152414047-beauty-8870258_1280.png"
-//       ],
-//       "timing": null,
-//       "remoteAddress": "106.14.228.159",
-//       "remotePort": 443,
-//       "socketHandledRequests": 1,
-//       "socketHandledResponses": 1
-//     }
-//   }
-// }
