@@ -9,6 +9,7 @@ export default defineConfig({
     platformProxy: {
       enabled: true, // 开启本地开发时的 D1/KV 模拟
     },
+    mode: 'directory',
   }),
   site: "https://yoursite.com",
   /*
