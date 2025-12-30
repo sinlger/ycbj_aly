@@ -7,39 +7,39 @@ const SHOWCASE_ITEMS = [
     title: "人体分割效果",
     desc: "发丝级精度处理，完美识别人物边缘，即使是飞扬的头发也能实现平滑抠图，适用于证件照及海报制作。",
     original:
-      "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=800&h=600&fit=crop",
+      "/images/SegmentCommonImage4.jpg",
     processed:
-      "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=800&h=600&fit=crop&blur=20", // 模拟效果
+      "/images/image (3).png", // 模拟效果
   },
   {
     title: "汽车分割效果",
     desc: "针对金属反光及玻璃透明度进行优化，精准分离车身与复杂背景，是汽车电商及广告设计的理想选择。",
     original:
-      "https://images.unsplash.com/photo-1503376780353-7e6692767b70?q=80&w=800&h=600&fit=crop",
+      "/images/SegmentCommonImage5.jpg",
     processed:
-      "https://images.unsplash.com/photo-1503376780353-7e6692767b70?q=80&w=800&h=600&fit=crop&sepia=1", // 模拟效果
+      "/images/image.png", // 模拟效果
   },
   {
     title: "宠物分割效果",
     desc: "攻克动物绒毛抠图难点，AI 自动识别细微毛发走向，保留猫狗宠物的灵动细节，不再有生硬边缘。",
     original:
-      "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?q=80&w=800&h=600&fit=crop",
+      "/images/SegmentCommonImage9.jpg",
     processed:
-      "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?q=80&w=800&h=600&fit=crop&grayscale=1", // 模拟效果
+      "/images/image (4).png", // 模拟效果
   },
   {
-    title: "服饰分割效果",
-    desc: "精确提取服装轮廓，保留面料质感与褶皱边缘。支持服装平铺及模特穿着图，助力时尚电商快速换底。",
+    title: "商品分割效果",
+    desc: "一键去除商品背景，支持透明图导出。适用于电商主图制作、营销海报设计，提升产品展示专业度。",
     original:
-      "https://images.unsplash.com/photo-1525507119028-ed4c629a60a3?q=80&w=800&h=600&fit=crop",
+      "/images/SegmentCommonImage2.jpg",
     processed:
-      "https://images.unsplash.com/photo-1525507119028-ed4c629a60a3?q=80&w=800&h=600&fit=crop&invert=1", // 模拟效果
+      "/images/image (2).png", // 模拟效果
   },
 ];
 ---
 
 <div class="py-20 bg-slate-50/50">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
     <div class="flex flex-col items-center mb-16 text-center">
       <span class="text-indigo-600 font-bold tracking-wider uppercase text-sm mb-2">Capabilities</span>
       <h2 class="text-3xl md:text-4xl font-black text-slate-900 tracking-tight mb-4">
@@ -65,7 +65,7 @@ const SHOWCASE_ITEMS = [
                  <h3 class="text-xl font-black text-slate-900">{item.title}</h3>
               </div>
               
-              <div class="rounded-2xl overflow-hidden shadow-inner border border-slate-100 bg-slate-50 relative">
+              <div class="rounded-2xl overflow-hidden shadow-inner border border-slate-100 bg-[url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQBAMAAADt3eJSAAAABGdBTUEAALGPC/xhBQAAAAFzUkdCAK7OHOkAAAADUExURefn5+3d2U0AAAAZdEVYdFNvZnR3YXJlAEFkb2JlIEltYWdlUmVhZHlxyWU8AAAAIGh0Uk5DAKdPcI9K0X7N5uD6zR0I2P3i8Xw06vzz8e/s5uPj497Q9YkAAAAhSURBVAjXY2CgJmBiYGBgYWBgAmIGBnCMygwM5GAiCCAAAP1AAgEwS8qJAAAAAElFTkSuQmCC')] relative">
                  <ImageComparison 
                     client:visible 
                     leftImage={item.original} 
