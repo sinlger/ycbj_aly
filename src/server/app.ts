@@ -199,7 +199,9 @@ const uploadRoute = createRoute({
           "SELECT used_count FROM usage_control WHERE fp_id = ? AND day_date = ?"
       ).bind(fingerprint, today).first();
 
-      if (record && record.used_count >= 3) {
+      // 在开发环境下忽略限额
+      // 安全说明：import.meta.env.DEV 是编译时常量。在生产构建中它为 false，因此此逻辑在生产环境绝对不会生效。
+      if (!import.meta.env.DEV && record && record.used_count >= 3) {
           return c.json({ success: false, error: 'Quota Exceeded' }, 429);
       }
     } catch (d1Error) {
@@ -399,7 +401,12 @@ app.openapi(usageRoute, async (c) => {
     ).bind(visitorId, today).first();
 
     const used_count = record ? record.used_count : 0;
-    const remaining_count = Math.max(0, 3 - used_count);
+    let remaining_count = Math.max(0, 3 - used_count);
+
+    // 开发环境显示无限额度
+    if (import.meta.env.DEV) {
+      remaining_count = 9999;
+    }
 
     return c.json({
       success: true,

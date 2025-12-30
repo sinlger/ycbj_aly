@@ -11,7 +11,7 @@ export default defineConfig({
     },
     mode: 'directory',
   }),
-  site: "https://yoursite.com",
+  site: "https://cutpicgo.com",
   /*
   experimental: {
     fonts: [

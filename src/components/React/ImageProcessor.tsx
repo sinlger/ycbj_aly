@@ -2,6 +2,7 @@ import React, { useState, useCallback, useEffect } from 'react';
 import ReactCompareImage from 'react-compare-image';
 import FingerprintJS from '@fingerprintjs/fingerprintjs';
 import { Turnstile } from '@marsidev/react-turnstile';
+import ConfirmDialog from './Dialogs';
 
 // 图标组件
 const IconSelect = ({ active }: { active: boolean }) => (
@@ -23,6 +24,11 @@ export default function ImageProcessor() {
   const [imageAspectRatio, setImageAspectRatio] = useState(1);
   const [visitorId, setVisitorId] = useState<string>('');
   const [turnstileToken, setTurnstileToken] = useState<string>('');
+  const [remainingUsage, setRemainingUsage] = useState<number | null>(null);
+  const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
+  
+  // 检查是否达到使用限制（开发环境下不启用限制）
+  const isLimitReached = !import.meta.env.DEV && remainingUsage !== null && remainingUsage <= 0;
 
   useEffect(() => {
     // Load FingerprintJS
@@ -33,6 +39,39 @@ export default function ImageProcessor() {
     };
     setFp();
   }, []);
+
+  useEffect(() => {
+    const fetchUsage = async () => {
+      if (!visitorId) return;
+      try {
+        const res = await fetch('/api/usage', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ visitorId }),
+        });
+        const data = await res.json();
+        if (data.success) {
+          setRemainingUsage(data.remaining_count);
+        }
+      } catch (error) {
+        console.error('Failed to fetch usage:', error);
+      }
+    };
+
+    fetchUsage();
+
+    const handleUsageUpdated = () => {
+      fetchUsage();
+    };
+
+    window.addEventListener('usage-updated', handleUsageUpdated);
+
+    return () => {
+      window.removeEventListener('usage-updated', handleUsageUpdated);
+    };
+  }, [visitorId]);
 
   useEffect(() => {
     if (originalImage) {
@@ -128,7 +167,7 @@ export default function ImageProcessor() {
       <div className="mx-auto">
 
         {/* 主交互区 - 卡片风格优化 */}
-        <div className="bg-white rounded-[32px] shadow-2xl shadow-indigo-100/50 overflow-hidden border border-slate-100/50 relative">
+        <div className="bg-white rounded-[32px] overflow-hidden border border-slate-100/50 relative">
 
           {/* 背景装饰 */}
           <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-50/50 rounded-full blur-3xl -z-10 translate-x-1/3 -translate-y-1/3"></div>
@@ -136,8 +175,22 @@ export default function ImageProcessor() {
           {/* 步骤 1: 上传图片 */}
           {step === 1 && (
             <div className="p-8 md:p-16 text-center">
-              <label className="group relative block w-full aspect-[2/1] max-h-[400px] flex flex-col items-center justify-center border-2 border-dashed border-indigo-100 hover:border-indigo-400 bg-slate-50/50 hover:bg-indigo-50/10 transition-all duration-300 rounded-[24px] cursor-pointer overflow-hidden">
-                <input type="file" className="hidden" onChange={handleUpload} accept="image/*" />
+              <label 
+                onClick={(e) => {
+                  if (isLimitReached) {
+                    e.preventDefault();
+                    window.dispatchEvent(new CustomEvent('show-toast', {
+                      detail: {
+                        title: "次数耗尽",
+                        content: "今日免费使用次数已用完，请明天再来",
+                        type: "error"
+                      }
+                    }));
+                  }
+                }}
+                className={`group relative block w-full aspect-[2/1] max-h-[400px] flex flex-col items-center justify-center border-2 border-dashed transition-all duration-300 rounded-[24px] overflow-hidden ${isLimitReached ? 'border-slate-200 bg-slate-100 cursor-not-allowed opacity-75' : 'border-indigo-100 hover:border-indigo-400 bg-slate-50/50 hover:bg-indigo-50/10 cursor-pointer'}`}
+              >
+                <input type="file" className="hidden" onChange={handleUpload} accept="image/*" disabled={isLimitReached} />
 
                 <div className="relative z-10 flex flex-col items-center">
                   <div className="w-20 h-20 bg-white rounded-full shadow-lg shadow-indigo-100 flex items-center justify-center text-indigo-600 mb-6 group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300">
@@ -251,7 +304,10 @@ export default function ImageProcessor() {
                   <p className="text-slate-500 text-sm">拖动滑块对比效果</p>
                 </div>
                 <div className="flex space-x-3 w-full md:w-auto">
-                  <button onClick={() => setStep(2)} className="flex-1 md:flex-none px-6 py-2.5 rounded-xl border border-slate-200 text-sm font-bold text-slate-600 hover:bg-slate-50 transition-all">
+                  <button 
+                    onClick={() => setIsConfirmDialogOpen(true)} 
+                    className="flex-1 md:flex-none px-6 py-2.5 rounded-xl border border-slate-200 text-sm font-bold text-slate-600 hover:bg-slate-50 transition-all"
+                  >
                     调整参数
                   </button>
                   <a
@@ -287,8 +343,6 @@ export default function ImageProcessor() {
                   <ReactCompareImage
                     leftImage={originalImage || ''}
                     rightImage={processedImage || ''}
-                    leftImageLabel="原图"
-                    rightImageLabel="结果"
                     sliderLineWidth={2}
                     handleSize={40}
                   />
@@ -299,6 +353,14 @@ export default function ImageProcessor() {
         </div>
 
       </div>
+      <ConfirmDialog
+        open={isConfirmDialogOpen}
+        onClose={setIsConfirmDialogOpen}
+        onConfirm={() => setStep(2)}
+        title="重新调整参数"
+        description="确定要重新调整参数吗？这将丢弃当前的分割结果，需要重新生成。"
+        confirmText="确认调整"
+      />
     </div>
   );
 }
