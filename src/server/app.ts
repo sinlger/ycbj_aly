@@ -78,7 +78,7 @@ app.openapi(imageProxyRoute, async (c) => {
   try {
     const key = c.req.param('key');
     const content = await getOssFile(c.env, key);
-    
+
     // Determine content type (simple check)
     let contentType = 'application/octet-stream';
     if (key.endsWith('.png')) contentType = 'image/png';
@@ -160,7 +160,7 @@ const uploadRoute = createRoute({
   },
 });
 
-  app.openapi(uploadRoute, async (c) => {
+app.openapi(uploadRoute, async (c) => {
   try {
     const body = await c.req.parseBody();
     const file = body['file'];
@@ -176,33 +176,33 @@ const uploadRoute = createRoute({
     // 只有当提供了 token 时才验证 (为了兼容性，或者强制验证)
     // 这里强制验证
     if (!cf_token || !fingerprint) {
-       return c.json({ success: false, error: 'Missing security tokens' }, 403);
+      return c.json({ success: false, error: 'Missing security tokens' }, 403);
     }
 
     const clientIP = c.req.header('cf-connecting-ip') || '127.0.0.1';
     const today = new Date().toISOString().split('T')[0];
 
     const verifyResponse = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
-        method: 'POST',
-        headers: { 'content-type': 'application/x-www-form-urlencoded' },
-        body: `secret=${c.env.TURNSTILE_SECRET_KEY}&response=${cf_token}&remoteip=${clientIP}`
+      method: 'POST',
+      headers: { 'content-type': 'application/x-www-form-urlencoded' },
+      body: `secret=${c.env.TURNSTILE_SECRET_KEY}&response=${cf_token}&remoteip=${clientIP}`
     });
     const verifyResult: any = await verifyResponse.json();
     if (!verifyResult.success) {
-        return c.json({ success: false, error: 'Turnstile validation failed' }, 403);
+      return c.json({ success: false, error: 'Turnstile validation failed' }, 403);
     }
 
     // --- 2. 检查 D1 数据库额度 ---
     // 假设 D1 绑定名为 bgremove
     try {
       const record = await c.env.bgremove.prepare(
-          "SELECT used_count FROM usage_control WHERE fp_id = ? AND day_date = ?"
+        "SELECT used_count FROM usage_control WHERE fp_id = ? AND day_date = ?"
       ).bind(fingerprint, today).first();
 
       // 在开发环境下忽略限额
       // 安全说明：import.meta.env.DEV 是编译时常量。在生产构建中它为 false，因此此逻辑在生产环境绝对不会生效。
       if (!import.meta.env.DEV && record && record.used_count >= 3) {
-          return c.json({ success: false, error: 'Quota Exceeded' }, 429);
+        return c.json({ success: false, error: 'Quota Exceeded' }, 429);
       }
     } catch (d1Error) {
       console.error('D1 Check Error:', d1Error);
@@ -212,11 +212,11 @@ const uploadRoute = createRoute({
 
     // 生成文件名
     const fileName = `${Date.now()}-${file.name}`;
-    
+
     // 上传到 OSS (Private)
     const result = await uploadToOss(c.env, file, fileName);
     // result.url is raw OSS URL, we won't use it directly for public access anymore.
-    
+
     // 生成签名 URL 用于 Vision API
     const signedUrl = await getOssSignatureUrl(c.env, fileName);
 
@@ -228,14 +228,14 @@ const uploadRoute = createRoute({
       try {
         const segmentResult = await segmentCommonImage(c.env, signedUrl, returnForm);
         // segmentResult.maskUrl 是 Vision API 返回的临时链接
-        
+
         if (segmentResult.maskUrl) {
-            // 下载 mask 并转存到 OSS (Private)
-            // 假设结果是 PNG (通常是)
-            const maskFileName = `processed-${Date.now()}.png`; 
-            
-            await saveUrlToOss(c.env, segmentResult.maskUrl, maskFileName);
-            maskUrl = `/api/image/${maskFileName}`; // 使用代理地址
+          // 下载 mask 并转存到 OSS (Private)
+          // 假设结果是 PNG (通常是)
+          const maskFileName = `processed-${Date.now()}.png`;
+
+          await saveUrlToOss(c.env, segmentResult.maskUrl, maskFileName);
+          maskUrl = `/api/image/${maskFileName}`; // 使用代理地址
         }
         requestId = segmentResult.requestId;
 
@@ -253,13 +253,13 @@ const uploadRoute = createRoute({
       }
     }
 
-    return c.json({ 
-      success: true, 
+    return c.json({
+      success: true,
       name: (result as any).name || fileName,
       url: `/api/image/${fileName}`, // 原图代理地址
       maskUrl: maskUrl, // 结果图代理地址
       requestId: requestId,
-      data: result 
+      data: result
     });
   } catch (e: any) {
     console.error(e);
@@ -331,15 +331,15 @@ const segmentRoute = createRoute({
 app.openapi(segmentRoute, async (c) => {
   try {
     const { imageUrl, returnForm } = await c.req.json();
-    
+
     if (!imageUrl) {
       return c.json({ success: false, error: 'imageUrl is required' }, 400);
     }
 
     const result = await segmentCommonImage(c.env, imageUrl, returnForm);
 
-    return c.json({ 
-      success: true, 
+    return c.json({
+      success: true,
       maskUrl: result.maskUrl,
       requestId: result.requestId
     });

@@ -4,10 +4,10 @@
       <div class="text-center lg:text-left">
         <p
           class="text-xl leading-tight tracking-tight sm:text-2xl md:text-3xl capitalize lg:text-4xl font-medium text-base-900 lg:text-balance">
-          Frequently asked questions
+          常见问题
         </p>
         <p class="text-base leading-normal mt-4 text-base-500 font-medium">
-          Answers to commonly asked questions about our platformw
+          关于我们平台的常见问题解答
         </p>
       </div>
       <div
@@ -25,7 +25,7 @@
           <button
             @click="setActiveAccordion(id)"
             class="flex items-center justify-between w-full p-4 pb-1 text-left font-medium select-none">
-            <span>How does end-to-end encryption work?</span>
+            <span>端到端加密是如何工作的？</span>
             <svg
               class="size-5 duration-300 ease-out text-accent-500 -rotate-[45deg]"
               :class="{ '-rotate-[45deg]': activeAccordion==id }"
@@ -43,11 +43,7 @@
           </button>
           <div x-show="activeAccordion==id" x-collapse="">
             <div class="p-4 pt-2 text-zinc-500">
-              End-to-end encryption ensures that only the sender and recipient
-              can access the content of a message. The information is encrypted
-              on the sender's device and can only be decrypted by the intended
-              recipient, preventing any intermediaries, including the platform
-              provider, from accessing the data.
+              端到端加密确保只有发送者和接收者可以访问消息内容。信息在发送者的设备上加密，只能由预期的接收者解密，防止任何中间人（包括平台提供商）访问数据。
             </div>
           </div>
         </div>
@@ -59,7 +55,7 @@
             @click="setActiveAccordion(id)"
             class="flex items-center justify-between w-full p-4 pb-1 text-left font-medium select-none">
             <span>
-              Can I access my encrypted data if I forget my encryption key?
+              如果我忘记了加密密钥，还能访问我的加密数据吗？
             </span>
             <svg
               class="w-5 h-5 duration-300 ease-out text-accent-500"
@@ -81,11 +77,7 @@
             x-collapse=""
             style="display: none;">
             <div class="p-4 pt-2 text-zinc-500">
-              No, forgetting or losing your encryption key means that your
-              encrypted data cannot be accessed. This is a crucial security
-              measure to ensure that even if someone gains unauthorized access
-              to your account, they won't be able to decrypt and view your
-              messages or files.
+              不能。忘记或丢失加密密钥意味着无法访问您的加密数据。这是一项至关重要的安全措施，确保即使有人未经授权访问您的帐户，他们也无法解密和查看您的消息或文件。
             </div>
           </div>
         </div>
@@ -97,8 +89,7 @@
             @click="setActiveAccordion(id)"
             class="flex items-center justify-between w-full p-4 pb-1 text-left font-medium select-none">
             <span>
-              Are there any limitations to the self-destructing messages
-              feature?
+              阅后即焚消息功能有什么限制吗？
             </span>
             <svg
               class="w-5 h-5 duration-300 ease-out text-accent-500"
@@ -120,12 +111,7 @@
             x-collapse=""
             style="display: none;">
             <div class="p-4 pt-2 text-zinc-500">
-              Self-destructing messages are designed to automatically delete
-              themselves after a specific period or upon being read by the
-              recipient. However, it's important to note that the feature only
-              removes the message from the devices involved in the conversation.
-              Recipients may take screenshots or use other means to capture the
-              content, which is beyond the platform's control.
+              阅后即焚消息旨在在特定时间段后或被接收者阅读后自动删除。但是，请注意，该功能仅从参与对话的设备中删除消息。接收者可能会截屏或使用其他方式捕获内容，这是平台无法控制的。
             </div>
           </div>
         </div>
@@ -137,8 +123,7 @@
             @click="setActiveAccordion(id)"
             class="flex items-center justify-between w-full p-4 pb-1 text-left font-medium select-none">
             <span>
-              What happens if I enable two-factor authentication and lose my
-              device?
+              如果我启用了双重认证但丢失了设备怎么办？
             </span>
             <svg
               class="w-5 h-5 duration-300 ease-out text-accent-500"
@@ -160,12 +145,7 @@
             x-collapse=""
             style="display: none;">
             <div class="p-4 pt-2 text-zinc-500">
-              Losing your device doesn't automatically compromise your account's
-              security. It's recommended to contact our support team as soon as
-              possible to disable the two-factor authentication on your lost
-              device and set up the authentication on your new device. This
-              process will help protect your account from unauthorized access
-              while ensuring you can regain access to it.
+              丢失设备不会自动危及您的帐户安全。建议您尽快联系我们的支持团队，禁用丢失设备上的双重认证，并在新设备上重新设置。此过程有助于保护您的帐户免受未经授权的访问，同时确保您可以重新获得访问权限。
             </div>
           </div>
         </div>
@@ -177,7 +157,7 @@
             @click="setActiveAccordion(id)"
             class="flex items-center justify-between w-full p-4 pb-1 text-left font-medium select-none">
             <span>
-              Is my personal information shared or sold to third parties?
+              我的个人信息会被共享或出售给第三方吗？
             </span>
             <svg
               class="w-5 h-5 duration-300 ease-out text-accent-500"
@@ -199,10 +179,7 @@
             x-collapse=""
             style="display: none;">
             <div class="p-4 pt-2 text-zinc-500">
-              No, we strictly adhere to a privacy-centric approach. Your
-              personal information is never shared, sold, or monetized. We
-              prioritize your privacy and ensure that your data remains
-              confidential and only accessible to you.
+              不会，我们严格遵守以隐私为中心的原则。您的个人信息绝不会被共享、出售或货币化。我们优先考虑您的隐私，并确保您的数据保密且只有您自己可以访问。
             </div>
           </div>
         </div>
@@ -213,7 +190,7 @@
           <button
             @click="setActiveAccordion(id)"
             class="flex items-center justify-between w-full p-4 pb-1 text-left font-medium select-none">
-            <span>Can I use this platform on multiple devices?</span>
+            <span>我可以在多台设备上使用此平台吗？</span>
             <svg
               class="w-5 h-5 duration-300 ease-out text-accent-500"
               :class="{ '-rotate-[45deg]': activeAccordion==id }"
@@ -234,10 +211,7 @@
             x-collapse=""
             style="display: none;">
             <div class="p-4 pt-2 text-zinc-500">
-              Yes, you can access our platform on multiple devices. Your
-              encrypted data remains synced across all devices, allowing you to
-              seamlessly communicate and access your files and messages from
-              anywhere.
+              是的，您可以在多台设备上访问我们的平台。您的加密数据将在所有设备上保持同步，让您可以随时随地无缝通信并访问您的文件和消息。
             </div>
           </div>
         </div>
@@ -249,7 +223,7 @@
             @click="setActiveAccordion(id)"
             class="flex items-center justify-between w-full p-4 pb-1 text-left font-medium select-none">
             <span>
-              Are there any storage limitations for files and documents?
+              文件和文档有存储限制吗？
             </span>
             <svg
               class="w-5 h-5 duration-300 ease-out text-accent-500"
@@ -271,11 +245,7 @@
             x-collapse=""
             style="display: none;">
             <div class="p-4 pt-2 text-zinc-500">
-              Our platform provides ample storage space for your files and
-              documents. However, there may be storage limitations based on the
-              pricing plan you choose. We offer flexible plans to suit your
-              needs and provide options to upgrade if you require additional
-              storage capacity.
+              我们的平台为您的文件和文档提供充足的存储空间。但是，根据您选择的定价计划，可能会有存储限制。我们提供灵活的计划以满足您的需求，如果您需要额外的存储容量，还可以选择升级。
             </div>
           </div>
         </div>
@@ -286,7 +256,7 @@
           <button
             @click="setActiveAccordion(id)"
             class="flex items-center justify-between w-full p-4 pb-1 text-left font-medium select-none">
-            <span>Is it possible to export my data from the platform?</span>
+            <span>可以从平台导出我的数据吗？</span>
             <svg
               class="w-5 h-5 duration-300 ease-out text-accent-500"
               :class="{ '-rotate-[45deg]': activeAccordion==id }"
@@ -307,11 +277,7 @@
             x-collapse=""
             style="display: none;">
             <div class="p-4 pt-2 text-zinc-500">
-              Yes, you can export your data from the platform. We offer export
-              features that allow you to download your messages, files, and
-              documents, ensuring you have a local copy for backup or migration
-              purposes. It provides you with greater control and flexibility
-              over your data.
+              是的，您可以从平台导出您的数据。我们提供导出功能，允许您下载消息、文件和文档，确保您有用于备份或迁移目的的本地副本。这为您提供了对数据的更大控制权和灵活性。
             </div>
           </div>
         </div>

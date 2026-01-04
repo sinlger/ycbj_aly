@@ -127,12 +127,21 @@ export default function ImageProcessor() {
 
       if (data.success) {
         if (data.maskUrl) {
-          setProcessedImage(data.maskUrl);
-          // 使用后端返回的原图代理地址，确保不直接暴露 OSS
-          if (data.url) setOriginalImage(data.url);
-          setStep(4);
-          // 触发使用次数更新事件
-          window.dispatchEvent(new CustomEvent('usage-updated'));
+          // 预加载处理后的图片
+          const img = new Image();
+          img.src = data.maskUrl;
+          img.onload = () => {
+            setProcessedImage(data.maskUrl);
+            // 使用后端返回的原图代理地址，确保不直接暴露 OSS
+            if (data.url) setOriginalImage(data.url);
+            setStep(4);
+            // 触发使用次数更新事件
+            window.dispatchEvent(new CustomEvent('usage-updated'));
+          };
+          img.onerror = () => {
+            alert('结果图片加载失败，请重试');
+            setStep(2);
+          };
         } else {
           alert('处理成功但未返回结果图片，请稍后重试');
           setStep(2);
@@ -326,9 +335,9 @@ export default function ImageProcessor() {
                 <div
                   className="relative rounded-2xl overflow-hidden border border-slate-100 shadow-inner"
                   style={{
-                    width: '100%',
-                    maxWidth: imageAspectRatio > 1 ? '100%' : `${500 * imageAspectRatio}px`,
-                    maxHeight: '500px',
+                    width: `${800 * imageAspectRatio}px`,
+                    maxWidth: '100%',
+                    maxHeight: '800px',
                     backgroundImage: `
                       linear-gradient(45deg, #e2e8f0 25%, transparent 25%), 
                       linear-gradient(-45deg, #e2e8f0 25%, transparent 25%), 
