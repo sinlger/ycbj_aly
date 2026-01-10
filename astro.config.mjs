@@ -24,7 +24,13 @@ export default defineConfig({
     ],
   },
   */
-  integrations: [sitemap(), react()],
+  integrations: [sitemap({
+    filter: (page) => 
+      page !== 'https://cutpicgo.com/login/' && 
+      page !== 'https://cutpicgo.com/signup/' &&
+      page !== 'https://cutpicgo.com/login' && 
+      page !== 'https://cutpicgo.com/signup',
+  }), react()],
   vite: {
     plugins: [tailwindcss()],
     resolve: {

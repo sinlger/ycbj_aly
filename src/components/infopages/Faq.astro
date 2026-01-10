@@ -4,283 +4,259 @@
       <div class="text-center lg:text-left">
         <p
           class="text-xl leading-tight tracking-tight sm:text-2xl md:text-3xl capitalize lg:text-4xl font-medium text-base-900 lg:text-balance">
-          常见问题
+          图像分割使用指南与常见问题
         </p>
         <p class="text-base leading-normal mt-4 text-base-500 font-medium">
-          关于我们平台的常见问题解答
+          为了帮助您获得完美的抠图效果，请参考以下注意事项和常见问题解答。
         </p>
       </div>
-      <div
-        x-data="{
-  activeAccordion: '',
-  setActiveAccordion(id) {
-  this.activeAccordion = (this.activeAccordion == id) ? '' : id
-  }
-  }"
-        class="relative w-full mx-auto font-normal lg:col-span-2">
-        <div
-          x-data="{ id: $id('accordion') }"
-          :class="{ 'text-black': activeAccordion==id, 'text-zinc-600 hover:text-accent-500': activeAccordion!=id }"
-          class="cursor-pointer group text-black">
-          <button
-            @click="setActiveAccordion(id)"
-            class="flex items-center justify-between w-full p-4 pb-1 text-left font-medium select-none">
-            <span>端到端加密是如何工作的？</span>
-            <svg
-              class="size-5 duration-300 ease-out text-accent-500 -rotate-[45deg]"
-              :class="{ '-rotate-[45deg]': activeAccordion==id }"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke-width="1.5"
-              stroke="currentColor">
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M12 6v12m6-6H6">
-              </path>
-            </svg>
-          </button>
-          <div x-show="activeAccordion==id" x-collapse="">
-            <div class="p-4 pt-2 text-zinc-500">
-              端到端加密确保只有发送者和接收者可以访问消息内容。信息在发送者的设备上加密，只能由预期的接收者解密，防止任何中间人（包括平台提供商）访问数据。
-            </div>
-          </div>
+      
+      <div class="relative w-full mx-auto font-normal lg:col-span-2 space-y-8">
+        
+        <!-- 获得最佳效果的 4 个建议 -->
+        <div class="p-6 bg-zinc-50 rounded-2xl border border-zinc-100">
+          <h3 class="flex items-center mb-4 text-lg font-semibold text-black">
+            <span class="mr-2">💡</span> 获得最佳效果的 4 个建议
+          </h3>
+          <ul class="space-y-4 text-zinc-600 text-sm md:text-base">
+            <li>
+              <strong class="text-black">光线充足且均匀：</strong>主体与背景之间的光影差异越大，AI 识别边缘（尤其是发丝和透明物体）就越精准。避免主体处于强烈的阴影中。
+            </li>
+            <li>
+              <strong class="text-black">背景相对简单：</strong>虽然我们的 AI 支持复杂背景，但如果背景与主体的颜色非常接近（例如白墙前的白衬衫），分割效果可能会受到影响。
+            </li>
+            <li>
+              <strong class="text-black">主体轮廓清晰：</strong>确保拍摄时对焦准确，主体没有严重的运动模糊。模糊的边缘会导致抠出的图看起来不自然。
+            </li>
+            <li>
+              <strong class="text-black">选择正确的专项模型：</strong>
+              <ul class="pl-4 mt-2 space-y-1 list-disc list-inside bg-white p-3 rounded-lg border border-zinc-100">
+                <li><strong class="text-black">人体模式：</strong>专为识别四肢、发丝优化。</li>
+                <li><strong class="text-black">商品模式：</strong>会自动保留商品的质感，并对硬轮廓进行锐化。</li>
+                <li><strong class="text-black">头像模式：</strong>会智能忽略肩膀以下的部分，仅保留头颈部。</li>
+              </ul>
+            </li>
+          </ul>
         </div>
+
+        <!-- 常见问题 (FAQ) -->
         <div
-          x-data="{ id: $id('accordion') }"
-          :class="{ 'text-black': activeAccordion==id, 'text-zinc-600 hover:text-accent-500': activeAccordion!=id }"
-          class="cursor-pointer group text-zinc-600 hover:text-accent-500">
-          <button
-            @click="setActiveAccordion(id)"
-            class="flex items-center justify-between w-full p-4 pb-1 text-left font-medium select-none">
-            <span>
-              如果我忘记了加密密钥，还能访问我的加密数据吗？
-            </span>
-            <svg
-              class="w-5 h-5 duration-300 ease-out text-accent-500"
-              :class="{ '-rotate-[45deg]': activeAccordion==id }"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke-width="1.5"
-              stroke="currentColor">
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M12 6v12m6-6H6">
-              </path>
-            </svg>
-          </button>
+          x-data="{
+            activeAccordion: '',
+            setActiveAccordion(id) {
+              this.activeAccordion = (this.activeAccordion == id) ? '' : id
+            }
+          }"
+        >
+          <h3 class="flex items-center mb-4 text-lg font-semibold text-black px-2">
+            <span class="mr-2">❓</span> 常见问题 (FAQ)
+          </h3>
+          
+          <!-- Q1 -->
           <div
-            x-show="activeAccordion==id"
-            x-collapse=""
-            style="display: none;">
-            <div class="p-4 pt-2 text-zinc-500">
-              不能。忘记或丢失加密密钥意味着无法访问您的加密数据。这是一项至关重要的安全措施，确保即使有人未经授权访问您的帐户，他们也无法解密和查看您的消息或文件。
+            x-data="{ id: $id('accordion') }"
+            :class="{ 'text-black': activeAccordion==id, 'text-zinc-600 hover:text-accent-500': activeAccordion!=id }"
+            class="cursor-pointer group text-black border-b border-zinc-100 last:border-0">
+            <button
+              @click="setActiveAccordion(id)"
+              class="flex items-center justify-between w-full p-4 text-left font-medium select-none">
+              <span>Q1: 图片上传后会保存吗？</span>
+              <svg
+                class="size-5 duration-300 ease-out text-accent-500 -rotate-[45deg]"
+                :class="{ '-rotate-[45deg]': activeAccordion==id }"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.5"
+                stroke="currentColor">
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M12 6v12m6-6H6">
+                </path>
+              </svg>
+            </button>
+            <div x-show="activeAccordion==id" x-collapse>
+              <div class="p-4 pt-0 text-zinc-500">
+                我们非常重视您的隐私。上传的图片仅用于实时 AI 处理，处理完成后，系统会自动在 1小时内 彻底删除原图和结果图。我们不会将其用于模型训练或任何商业用途。
+              </div>
             </div>
           </div>
-        </div>
-        <div
-          x-data="{ id: $id('accordion') }"
-          :class="{ 'text-black': activeAccordion==id, 'text-zinc-600 hover:text-accent-500': activeAccordion!=id }"
-          class="cursor-pointer group text-zinc-600 hover:text-accent-500">
-          <button
-            @click="setActiveAccordion(id)"
-            class="flex items-center justify-between w-full p-4 pb-1 text-left font-medium select-none">
-            <span>
-              阅后即焚消息功能有什么限制吗？
-            </span>
-            <svg
-              class="w-5 h-5 duration-300 ease-out text-accent-500"
-              :class="{ '-rotate-[45deg]': activeAccordion==id }"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke-width="1.5"
-              stroke="currentColor">
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M12 6v12m6-6H6">
-              </path>
-            </svg>
-          </button>
+
+          <!-- Q2 -->
           <div
-            x-show="activeAccordion==id"
-            x-collapse=""
-            style="display: none;">
-            <div class="p-4 pt-2 text-zinc-500">
-              阅后即焚消息旨在在特定时间段后或被接收者阅读后自动删除。但是，请注意，该功能仅从参与对话的设备中删除消息。接收者可能会截屏或使用其他方式捕获内容，这是平台无法控制的。
+            x-data="{ id: $id('accordion') }"
+            :class="{ 'text-black': activeAccordion==id, 'text-zinc-600 hover:text-accent-500': activeAccordion!=id }"
+            class="cursor-pointer group text-zinc-600 hover:text-accent-500 border-b border-zinc-100 last:border-0">
+            <button
+              @click="setActiveAccordion(id)"
+              class="flex items-center justify-between w-full p-4 text-left font-medium select-none">
+              <span>Q2: 为什么有些细小的头发抠不出来？</span>
+              <svg
+                class="w-5 h-5 duration-300 ease-out text-accent-500"
+                :class="{ '-rotate-[45deg]': activeAccordion==id }"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.5"
+                stroke="currentColor">
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M12 6v12m6-6H6">
+                </path>
+              </svg>
+            </button>
+            <div x-show="activeAccordion==id" x-collapse style="display: none;">
+              <div class="p-4 pt-0 text-zinc-500">
+                极细的碎发或与背景色彩完全融合的头发是图像分割的难点。建议尝试使用“人体分割”专项模型，它采用了更深层的神经网络来捕捉细节。
+              </div>
             </div>
           </div>
-        </div>
-        <div
-          x-data="{ id: $id('accordion') }"
-          :class="{ 'text-black': activeAccordion==id, 'text-zinc-600 hover:text-accent-500': activeAccordion!=id }"
-          class="cursor-pointer group text-zinc-600 hover:text-accent-500">
-          <button
-            @click="setActiveAccordion(id)"
-            class="flex items-center justify-between w-full p-4 pb-1 text-left font-medium select-none">
-            <span>
-              如果我启用了双重认证但丢失了设备怎么办？
-            </span>
-            <svg
-              class="w-5 h-5 duration-300 ease-out text-accent-500"
-              :class="{ '-rotate-[45deg]': activeAccordion==id }"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke-width="1.5"
-              stroke="currentColor">
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M12 6v12m6-6H6">
-              </path>
-            </svg>
-          </button>
+
+          <!-- Q3 -->
           <div
-            x-show="activeAccordion==id"
-            x-collapse=""
-            style="display: none;">
-            <div class="p-4 pt-2 text-zinc-500">
-              丢失设备不会自动危及您的帐户安全。建议您尽快联系我们的支持团队，禁用丢失设备上的双重认证，并在新设备上重新设置。此过程有助于保护您的帐户免受未经授权的访问，同时确保您可以重新获得访问权限。
+            x-data="{ id: $id('accordion') }"
+            :class="{ 'text-black': activeAccordion==id, 'text-zinc-600 hover:text-accent-500': activeAccordion!=id }"
+            class="cursor-pointer group text-zinc-600 hover:text-accent-500 border-b border-zinc-100 last:border-0">
+            <button
+              @click="setActiveAccordion(id)"
+              class="flex items-center justify-between w-full p-4 text-left font-medium select-none">
+              <span>Q3: 免费版有大小限制吗？</span>
+              <svg
+                class="w-5 h-5 duration-300 ease-out text-accent-500"
+                :class="{ '-rotate-[45deg]': activeAccordion==id }"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.5"
+                stroke="currentColor">
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M12 6v12m6-6H6">
+                </path>
+              </svg>
+            </button>
+            <div x-show="activeAccordion==id" x-collapse style="display: none;">
+              <div class="p-4 pt-0 text-zinc-500">
+                是的。为了保证服务流畅，免费工具支持最大 10MB 的图片上传。生成的透明 PNG 结果图最大分辨率通常限制在 2000px 左右。如果您有更高清的需求，可以关注我们的专业版。
+              </div>
             </div>
           </div>
-        </div>
-        <div
-          x-data="{ id: $id('accordion') }"
-          :class="{ 'text-black': activeAccordion==id, 'text-zinc-600 hover:text-accent-500': activeAccordion!=id }"
-          class="cursor-pointer group text-zinc-600 hover:text-accent-500">
-          <button
-            @click="setActiveAccordion(id)"
-            class="flex items-center justify-between w-full p-4 pb-1 text-left font-medium select-none">
-            <span>
-              我的个人信息会被共享或出售给第三方吗？
-            </span>
-            <svg
-              class="w-5 h-5 duration-300 ease-out text-accent-500"
-              :class="{ '-rotate-[45deg]': activeAccordion==id }"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke-width="1.5"
-              stroke="currentColor">
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M12 6v12m6-6H6">
-              </path>
-            </svg>
-          </button>
+
+          <!-- Q4 -->
           <div
-            x-show="activeAccordion==id"
-            x-collapse=""
-            style="display: none;">
-            <div class="p-4 pt-2 text-zinc-500">
-              不会，我们严格遵守以隐私为中心的原则。您的个人信息绝不会被共享、出售或货币化。我们优先考虑您的隐私，并确保您的数据保密且只有您自己可以访问。
+            x-data="{ id: $id('accordion') }"
+            :class="{ 'text-black': activeAccordion==id, 'text-zinc-600 hover:text-accent-500': activeAccordion!=id }"
+            class="cursor-pointer group text-zinc-600 hover:text-accent-500 border-b border-zinc-100 last:border-0">
+            <button
+              @click="setActiveAccordion(id)"
+              class="flex items-center justify-between w-full p-4 text-left font-medium select-none">
+              <span>Q4: 抠出来的图边缘有白边怎么办？</span>
+              <svg
+                class="w-5 h-5 duration-300 ease-out text-accent-500"
+                :class="{ '-rotate-[45deg]': activeAccordion==id }"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.5"
+                stroke="currentColor">
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M12 6v12m6-6H6">
+                </path>
+              </svg>
+            </button>
+            <div x-show="activeAccordion==id" x-collapse style="display: none;">
+              <div class="p-4 pt-0 text-zinc-500">
+                白边通常是因为原图背景太亮导致的。您可以尝试在下载后，使用设计软件微调边缘羽化，或者在拍摄时尽量选择与最终使用场景色调接近的背景。
+              </div>
             </div>
           </div>
-        </div>
-        <div
-          x-data="{ id: $id('accordion') }"
-          :class="{ 'text-black': activeAccordion==id, 'text-zinc-600 hover:text-accent-500': activeAccordion!=id }"
-          class="cursor-pointer group text-zinc-600 hover:text-accent-500">
-          <button
-            @click="setActiveAccordion(id)"
-            class="flex items-center justify-between w-full p-4 pb-1 text-left font-medium select-none">
-            <span>我可以在多台设备上使用此平台吗？</span>
-            <svg
-              class="w-5 h-5 duration-300 ease-out text-accent-500"
-              :class="{ '-rotate-[45deg]': activeAccordion==id }"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke-width="1.5"
-              stroke="currentColor">
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M12 6v12m6-6H6">
-              </path>
-            </svg>
-          </button>
+
+          <!-- Q5 -->
           <div
-            x-show="activeAccordion==id"
-            x-collapse=""
-            style="display: none;">
-            <div class="p-4 pt-2 text-zinc-500">
-              是的，您可以在多台设备上访问我们的平台。您的加密数据将在所有设备上保持同步，让您可以随时随地无缝通信并访问您的文件和消息。
+            x-data="{ id: $id('accordion') }"
+            :class="{ 'text-black': activeAccordion==id, 'text-zinc-600 hover:text-accent-500': activeAccordion!=id }"
+            class="cursor-pointer group text-zinc-600 hover:text-accent-500 border-b border-zinc-100 last:border-0">
+            <button
+              @click="setActiveAccordion(id)"
+              class="flex items-center justify-between w-full p-4 text-left font-medium select-none">
+              <span>Q5: 支持批量处理吗？</span>
+              <svg
+                class="w-5 h-5 duration-300 ease-out text-accent-500"
+                :class="{ '-rotate-[45deg]': activeAccordion==id }"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.5"
+                stroke="currentColor">
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M12 6v12m6-6H6">
+                </path>
+              </svg>
+            </button>
+            <div x-show="activeAccordion==id" x-collapse style="display: none;">
+              <div class="p-4 pt-0 text-zinc-500">
+                目前网页端小工具仅支持单张处理。如果您需要一次性处理成百上千张图片，欢迎通过页面顶部的“API”链接了解我们的开发者服务。
+              </div>
             </div>
           </div>
-        </div>
-        <div
-          x-data="{ id: $id('accordion') }"
-          :class="{ 'text-black': activeAccordion==id, 'text-zinc-600 hover:text-accent-500': activeAccordion!=id }"
-          class="cursor-pointer group text-zinc-600 hover:text-accent-500">
-          <button
-            @click="setActiveAccordion(id)"
-            class="flex items-center justify-between w-full p-4 pb-1 text-left font-medium select-none">
-            <span>
-              文件和文档有存储限制吗？
-            </span>
-            <svg
-              class="w-5 h-5 duration-300 ease-out text-accent-500"
-              :class="{ '-rotate-[45deg]': activeAccordion==id }"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke-width="1.5"
-              stroke="currentColor">
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M12 6v12m6-6H6">
-              </path>
-            </svg>
-          </button>
+
+          <!-- Q6 -->
           <div
-            x-show="activeAccordion==id"
-            x-collapse=""
-            style="display: none;">
-            <div class="p-4 pt-2 text-zinc-500">
-              我们的平台为您的文件和文档提供充足的存储空间。但是，根据您选择的定价计划，可能会有存储限制。我们提供灵活的计划以满足您的需求，如果您需要额外的存储容量，还可以选择升级。
+            x-data="{ id: $id('accordion') }"
+            :class="{ 'text-black': activeAccordion==id, 'text-zinc-600 hover:text-accent-500': activeAccordion!=id }"
+            class="cursor-pointer group text-zinc-600 hover:text-accent-500 border-b border-zinc-100 last:border-0">
+            <button
+              @click="setActiveAccordion(id)"
+              class="flex items-center justify-between w-full p-4 text-left font-medium select-none">
+              <span>Q6: 天空分割可以把楼建筑也抠掉吗？</span>
+              <svg
+                class="w-5 h-5 duration-300 ease-out text-accent-500"
+                :class="{ '-rotate-[45deg]': activeAccordion==id }"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.5"
+                stroke="currentColor">
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M12 6v12m6-6H6">
+                </path>
+              </svg>
+            </button>
+            <div x-show="activeAccordion==id" x-collapse style="display: none;">
+              <div class="p-4 pt-0 text-zinc-500">
+                天空分割模型仅识别“天际线”以上的部分。如果您想去掉建筑，建议尝试“通用分割”并点击建筑作为背景（在专业版功能中支持）。
+              </div>
             </div>
           </div>
         </div>
-        <div
-          x-data="{ id: $id('accordion') }"
-          :class="{ 'text-black': activeAccordion==id, 'text-zinc-600 hover:text-accent-500': activeAccordion!=id }"
-          class="cursor-pointer group text-zinc-600 hover:text-accent-500">
-          <button
-            @click="setActiveAccordion(id)"
-            class="flex items-center justify-between w-full p-4 pb-1 text-left font-medium select-none">
-            <span>可以从平台导出我的数据吗？</span>
-            <svg
-              class="w-5 h-5 duration-300 ease-out text-accent-500"
-              :class="{ '-rotate-[45deg]': activeAccordion==id }"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke-width="1.5"
-              stroke="currentColor">
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M12 6v12m6-6H6">
-              </path>
-            </svg>
-          </button>
-          <div
-            x-show="activeAccordion==id"
-            x-collapse=""
-            style="display: none;">
-            <div class="p-4 pt-2 text-zinc-500">
-              是的，您可以从平台导出您的数据。我们提供导出功能，允许您下载消息、文件和文档，确保您有用于备份或迁移目的的本地副本。这为您提供了对数据的更大控制权和灵活性。
-            </div>
-          </div>
+
+        <!-- 常见错误处理 -->
+        <div class="p-6 bg-red-50 rounded-2xl border border-red-100">
+          <h3 class="flex items-center mb-4 text-lg font-semibold text-red-900">
+            <span class="mr-2">🛠</span> 常见错误处理
+          </h3>
+          <ul class="space-y-3 text-red-800 text-sm md:text-base">
+            <li>
+              <strong class="text-red-950">上传失败：</strong>请检查网络连接或图片格式是否为 JPG/PNG/WEBP。
+            </li>
+            <li>
+              <strong class="text-red-950">处理超时：</strong>可能是由于服务器繁忙或图片分辨率过高，请稍后刷新重试。
+            </li>
+            <li>
+              <strong class="text-red-950">透明图下载后变黑：</strong>这通常是因为某些看图软件不支持透明通道，建议将图片拖入浏览器或 Photoshop 查看。
+            </li>
+          </ul>
         </div>
+
       </div>
     </div>
   </div>
