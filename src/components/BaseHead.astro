@@ -1,16 +1,58 @@
 ---
 import "../styles/global.css";
+
+const { 
+  title = "CutPicGo - AI 智能一键抠图", 
+  description = "CutPicGo - AI 智能一键抠图，自动识别主体并去除背景，让创意设计更轻松。",
+  image = "/og-image.png"
+} = Astro.props;
+
+const schema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "name": "CutPicGo",
+      "url": "https://cutpicgo.com/",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": "https://cutpicgo.com/?q={search_term_string}",
+        "query-input": "required name=search_term_string"
+      }
+    },
+    {
+      "@type": "Organization",
+      "name": "CutPicGo",
+      "url": "https://cutpicgo.com/",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://cutpicgo.com/logo.svg"
+      }
+    },
+    {
+      "@type": "WebApplication",
+      "name": "CutPicGo - AI Background Remover",
+      "url": "https://cutpicgo.com/",
+      "applicationCategory": "DesignApplication",
+      "operatingSystem": "Any",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "description": description,
+      "featureList": "AI Background Removal, Image Segmentation, Transparent Background"
+    }
+  ]
+};
 ---
 
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <!-- Basic Meta Tags -->
-<title>CutPicGo - AI 智能一键抠图</title>
-<meta
-  name="description"
-  content="CutPicGo - AI 智能一键抠图，自动识别主体并去除背景，让创意设计更轻松。"
-/>
-<meta name="keywords" content="AI抠图, 去背景, 智能抠图, 在线抠图, CutPicGo" />
+<title>{title}</title>
+<meta name="description" content={description} />
+<meta name="keywords" content="免费抠图, 免费AI抠图, 去背景, 智能抠图, 在线抠图, CutPicGo, free background remover, free ai background remover, remove background free" />
 <meta name="author" content="CutPicGo" />
 
 <!-- Favicons -->
@@ -20,44 +62,34 @@ import "../styles/global.css";
 <link rel="shortcut icon" href="/logo.svg" type="image/x-icon" />
 
 <!-- Open Graph / Facebook -->
-<meta property="og:image" content="/og-image.png" />
 <meta property="og:type" content="website" />
-<meta property="og:url" content="https://cutpicgo.com/" />
-<meta property="og:title" content="CutPicGo - AI 智能一键抠图" />
-<meta
-  property="og:description"
-  content="CutPicGo - AI 智能一键抠图，自动识别主体并去除背景，让创意设计更轻松。"
-/>
-<meta
-  property="og:image"
-  content="https://cutpicgo.com/og-image.png"
-/>
+<meta property="og:url" content={Astro.url} />
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+<meta property="og:image" content={new URL(image, Astro.url)} />
 
 <!-- Twitter -->
 <meta property="twitter:card" content="summary_large_image" />
-<meta property="twitter:url" content="https://cutpicgo.com/" />
-<meta property="twitter:title" content="CutPicGo - AI 智能一键抠图" />
-<meta
-  property="twitter:description"
-  content="CutPicGo - AI 智能一键抠图，自动识别主体并去除背景，让创意设计更轻松。"
-/>
-<meta
-  property="twitter:image"
-  content="https://cutpicgo.com/og-image.png"
-/>
+<meta property="twitter:url" content={Astro.url} />
+<meta property="twitter:title" content={title} />
+<meta property="twitter:description" content={description} />
+<meta property="twitter:image" content={new URL(image, Astro.url)} />
 
 <!-- Canonical URL -->
-<link rel="canonical" href="https://cutpicgo.com/" />
+<link rel="canonical" href={Astro.url} />
 
 <!-- Additional SEO -->
 <meta name="robots" content="index, follow" />
 <meta name="googlebot" content="index, follow" />
 
-<!-- Apple Touch Icon (already included in favicons, but keeping for backwards compatibility) -->
+<!-- Apple Touch Icon -->
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
 
 <!-- Theme Color for Mobile Browsers -->
 <meta name="theme-color" content="#ffffff" />
+
+<!-- JSON-LD SEO Schema -->
+<script type="application/ld+json" set:html={JSON.stringify(schema)} />
 
 <!---- Alpine  -->
 <script is:inline defer src="https://unpkg.com/alpinejs@3.10.5/dist/cdn.min.js">
